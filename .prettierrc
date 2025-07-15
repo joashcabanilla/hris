@@ -1,0 +1,22 @@
+{
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "semi": true,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "bracketSpacing": true,
+  "proseWrap": "preserve",
+  "printWidth": 100,
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "tabWidth": 2,
+        "printWidth": 100,
+        "trailingComma": "none",
+        "bracketSpacing": true,
+        "proseWrap": "preserve"
+      }
+    }
+  ]
+}
