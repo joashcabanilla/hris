@@ -50,11 +50,6 @@ export default function Login() {
     //TODO - forgot password function
   };
 
-  const handleRegister = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    router.push("/register");
-  };
-
   const formSubmit = (data: z.infer<typeof LoginSchema>) => {
     console.log(data);
   };
@@ -175,16 +170,6 @@ export default function Login() {
                   <Button size="lg" className="text-lg font-bold" type="submit">
                     Sign In
                   </Button>
-                  <p className="text-muted-foreground text-center text-base">
-                    Don&apos;t have an account yet?{" "}
-                    <Anchor
-                      variant="link"
-                      className="p-0 text-base font-bold"
-                      onClick={handleRegister}
-                    >
-                      Sign Up
-                    </Anchor>
-                  </p>
                 </div>
               </div>
             </form>
