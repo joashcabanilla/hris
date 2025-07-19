@@ -31,7 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Anchor } from "@/components/ui/anchor";
 
 //Components
-import { LoginCard } from "@/components/card";
+import { LoginCard } from "@/components/shared/card";
 
 export default function Login() {
   const router = useRouter();
@@ -51,7 +51,7 @@ export default function Login() {
   };
 
   const formSubmit = (data: z.infer<typeof LoginSchema>) => {
-    console.log(data);
+    
   };
 
   const handleError = (error: FieldErrors) => {

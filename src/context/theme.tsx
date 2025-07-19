@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 
 //components
-import { Login } from "@/components/loading";
+import { Login } from "@/components/shared/loading";
 
 type themeState = {
   theme?: string;

@@ -8,7 +8,7 @@ import { card } from "@/lib/tv/global";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 //Components
-import { SwitchTheme } from "@/components/switch-theme";
+import { SwitchTheme } from "@/components/shared/switch-theme";
 
 export const LoginHeader = () => {
   return (
