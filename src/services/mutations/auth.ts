@@ -1,16 +1,23 @@
 import { useMutation } from "@tanstack/react-query";
-import { login, loginData, lockedUser, lockedUserData } from "@/services/api/auth";
+import { login, loginProps, lockedUser, userIdProps, resendOtp } from "@/services/api/auth";
 
 export const useLogin = () => {
   return useMutation({
     mutationKey: ["authLogin"],
-    mutationFn: (data: loginData) => login(data)
+    mutationFn: (data: loginProps) => login(data)
   });
 };
 
 export const useLockedUser = () => {
   return useMutation({
     mutationKey: ["authLockedUser"],
-    mutationFn: (data: lockedUserData) => lockedUser(data)
+    mutationFn: (data: userIdProps) => lockedUser(data)
+  });
+};
+
+export const useResendOtp = () => {
+  return useMutation({
+    mutationKey: ["authResendOtp"],
+    mutationFn: (data: userIdProps) => resendOtp(data)
   });
 };

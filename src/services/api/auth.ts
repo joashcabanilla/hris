@@ -5,14 +5,18 @@ const defaultHeaders = {
   Accept: "application/json"
 };
 
-export interface loginData {
+export interface loginProps {
   username: string;
   password: string;
 }
 
-export const login = async (data: loginData) => {
-  const res = await fetch(`${BASE_URL}/login`, {
-    method: "POST",
+export interface userIdProps {
+  id: string;
+}
+
+const fetchRequest = async (method: string, endpoint: string, data: unknown) => {
+  const res = await fetch(`${BASE_URL}/${endpoint}`, {
+    method: method,
     headers: defaultHeaders,
     body: JSON.stringify(data)
   });
@@ -24,15 +28,6 @@ export const login = async (data: loginData) => {
   }
 };
 
-export interface lockedUserData {
-  id: string;
-}
-export const lockedUser = async (data: lockedUserData) => {
-  const res = await fetch(`${BASE_URL}/lockeduser`, {
-    method: "POST",
-    headers: defaultHeaders,
-    body: JSON.stringify(data)
-  });
-
-  return res.json();
-};
+export const login = (data: loginProps) => fetchRequest("POST", "login", data);
+export const lockedUser = (data: userIdProps) => fetchRequest("POST", "lockeduser", data);
+export const resendOtp = (data: userIdProps) => fetchRequest("POST", "resendOTP", data);
