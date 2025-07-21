@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import { TanstackProvider } from "@/components/providers/tanstack-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
+import { TanstackProvider } from "@/providers/tanstack-provider";
 
 //CSS and Fonts
 import "./globals.css";

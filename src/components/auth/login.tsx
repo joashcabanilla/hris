@@ -5,7 +5,6 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 
 //css utils
 import { cn } from "@/lib/utils";
@@ -15,7 +14,7 @@ import { input, inputClear, inputIcon } from "@/lib/tv/global";
 import { LoginSchema } from "@/schemas";
 
 //Icons
-import { UserRound, Lock, Eye, EyeOff } from "lucide-react";
+import { UserRound, Lock, Eye, EyeOff, LoaderCircle } from "lucide-react";
 
 //Shadcn components
 import {
@@ -32,28 +31,69 @@ import { Anchor } from "@/components/ui/anchor";
 
 //Components
 import { LoginCard } from "@/components/shared/card";
+import { Copyright } from "@/components/shared/copyright";
+import { FormError } from "@/components/shared/form-error";
+
+//Services
+import { useLogin, useLockedUser } from "@/services/mutations/auth";
 
 export default function Login() {
-  const router = useRouter();
+  //ref hook
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const loginAttempt = useRef(3);
 
+  //states
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [errorTitle, setErrorTitle] = useState<string | undefined>(undefined);
+  const [errorDescription, setErrorDescription] = useState<string | undefined>(undefined);
 
+  //mutations
+  const loginMutation = useLogin();
+  const lockedUserMutation = useLockedUser();
+
+  //use form hook
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: { username: "", password: "" }
   });
 
+  /**
+   * Handle HTML Events
+   */
+  //handle forgot password event
   const handleForgotPassword = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     //TODO - forgot password function
   };
 
+  //handle login event
   const formSubmit = (data: z.infer<typeof LoginSchema>) => {
-    
+    loginMutation.mutate(data, {
+      onSuccess: (res) => {
+        if (!res.success) {
+          setErrorTitle(res.message);
+          setErrorDescription(undefined);
+          if (res.message == "The password you entered is incorrect.") {
+            loginAttempt.current--;
+            if (loginAttempt.current === 0) {
+              lockedUserMutation.mutate({ id: res.user.id });
+              setErrorTitle("Your account is locked. Please contact support.");
+              loginAttempt.current = 3;
+            } else {
+              setErrorDescription(
+                `You have ${loginAttempt.current} remaining login ${loginAttempt.current === 1 ? "attempt" : "attempts"}. Another failed attempt will result in your account being locked.`
+              );
+            }
+          }
+        } else {
+          
+        }
+      }
+    });
   };
 
+  //handle login form error
   const handleError = (error: FieldErrors) => {
     const firstError = Object.keys(error)[0];
     switch (firstError) {
@@ -76,6 +116,9 @@ export default function Login() {
             Enter your credentials to access your account.
           </p>
         </div>
+
+        {/* Form Error Message */}
+        <FormError title={errorTitle} description={errorDescription} />
 
         {/* Form Content */}
         <div>
@@ -167,8 +210,19 @@ export default function Login() {
                   >
                     Forgot Password?
                   </Anchor>
-                  <Button size="lg" className="text-lg font-bold" type="submit">
-                    Sign In
+                  <Button
+                    size="lg"
+                    className="text-lg font-bold"
+                    type="submit"
+                    disabled={loginMutation.isPending}
+                  >
+                    {loginMutation.isPending ? (
+                      <>
+                        <LoaderCircle className="-ms-2 animate-spin" strokeWidth={3} /> Loading...
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
                   </Button>
                 </div>
               </div>
@@ -176,6 +230,7 @@ export default function Login() {
           </Form>
         </div>
       </div>
+      <Copyright />
     </LoginCard>
   );
 }
