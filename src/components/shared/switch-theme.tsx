@@ -5,7 +5,7 @@ import { useId } from "react";
 import { useTheme } from "next-themes";
 
 //context global state
-import { useThemeContext } from "@/context/theme-context";
+import { useThemeContext } from "@/context/global/theme-context";
 
 //Icons
 import { MoonIcon, SunIcon } from "lucide-react";

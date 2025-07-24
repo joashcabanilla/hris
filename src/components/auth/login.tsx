@@ -5,6 +5,10 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+
+//cookie library
+import Cookies from "js-cookie";
 
 //css utils
 import { cn } from "@/lib/utils";
@@ -32,21 +36,31 @@ import { Anchor } from "@/components/ui/anchor";
 //Components
 import { LoginCard } from "@/components/shared/card";
 import { Copyright } from "@/components/shared/copyright";
-import { FormError } from "@/components/shared/form-error";
+import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
 import { useLogin, useLockedUser } from "@/services/mutations/auth";
 
+//context global state
+import { useAuthContext } from "@/context/auth/auth-context";
+
 export default function Login() {
+  //router
+  const router = useRouter();
+
   //ref hook
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const loginAttempt = useRef(3);
 
+  //global state
+  const { dispatch } = useAuthContext();
+
   //states
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [errorTitle, setErrorTitle] = useState<string | undefined>(undefined);
-  const [errorDescription, setErrorDescription] = useState<string | undefined>(undefined);
+  const [alertTitle, setAlertTitle] = useState<string | undefined>(undefined);
+  const [alertMessage, setAlertMessage] = useState<string | undefined>(undefined);
+  const [alertType, setAlertType] = useState<AlertType>("success");
 
   //mutations
   const loginMutation = useLogin();
@@ -72,26 +86,41 @@ export default function Login() {
     loginMutation.mutate(data, {
       onSuccess: (res) => {
         if (!res.success) {
-          setErrorTitle(res.message);
-          setErrorDescription(undefined);
+          setAlertType("error");
+          setAlertTitle(res.message);
+          setAlertMessage(undefined);
           if (res.message == "The password you entered is incorrect.") {
             loginAttempt.current--;
             if (loginAttempt.current === 0) {
               lockedUserMutation.mutate({ id: res.user.id });
-              setErrorTitle("Your account is locked. Please contact support.");
+              setAlertTitle("Your account is locked. Please contact support.");
               loginAttempt.current = 3;
             } else {
-              setErrorDescription(
+              setAlertMessage(
                 `You have ${loginAttempt.current} remaining login ${loginAttempt.current === 1 ? "attempt" : "attempts"}. Another failed attempt will result in your account being locked.`
               );
             }
           }
         } else {
-          //save token
-          sessionStorage.setItem("token", res.token);
+          Cookies.set("token", res.token, { secure: true, expires: 1 });
+          const payload = {
+            id: res.user.id,
+            usertype_id: res.user.usertype_id,
+            firstname: res.user.firstname,
+            middlename: res.user.middlename,
+            lastname: res.user.lastname,
+            email: res.user.email,
+            email_verified: res.user.last_login_at && new Date(res.user.last_login_at),
+            username: res.user.username,
+            status: res.user.status
+          };
+          dispatch({ type: "LOGIN", payload: payload });
+
           if (res.message == "Please verify your email to complete the login process.") {
-            const userData = res.user;
+            router.replace("verify-email");
           }
+          setAlertType("success");
+          setAlertTitle(res.message);
         }
       }
     });
@@ -121,8 +150,8 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Form Error Message */}
-        <FormError title={errorTitle} description={errorDescription} />
+        {/* Form Message */}
+        <FormAlert title={alertTitle} message={alertMessage} type={alertType} />
 
         {/* Form Content */}
         <div>

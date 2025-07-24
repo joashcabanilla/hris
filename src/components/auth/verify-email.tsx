@@ -15,10 +15,13 @@ import { Button } from "@/components/ui/button";
 //Components
 import { LoginCard } from "@/components/shared/card";
 import { Copyright } from "@/components/shared/copyright";
-import { FormError } from "@/components/shared/form-error";
+import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
 import { useResendOtp } from "@/services/mutations/auth";
+
+//context global state
+import { useAuthContext } from "@/context/auth/auth-context";
 
 function Slot(props: SlotProps) {
   return (
@@ -37,30 +40,40 @@ export default function VerifyEmail() {
   //react hook
   const id = useId();
 
+  //global state
+  const { state } = useAuthContext();
+
   //component state
-  const [timeLeft, setTimeLeft] = useState(5 * 60);
-  const [errorTitle, setErrorTitle] = useState<string | undefined>(undefined);
-  const [errorDescription, setErrorDescription] = useState<string | undefined>(undefined);
+  const [timeLeft, setTimeLeft] = useState(2 * 60);
+  const [alertTitle, setAlertTitle] = useState<string | undefined>(undefined);
+  const [alertType, setAlertType] = useState<AlertType>("success");
 
   //mutations
   const resendOtpMutation = useResendOtp();
 
-  //handle OTP event
+  //handle validate OTP event
   const handleOTP = (otp: string) => {
     //TODO logic for OTP validation
   };
 
   //handle resend OTP
   const handleResend = () => {
-    resendOtpMutation.mutate(
-      { id: "0" },
-      {
-        onSuccess: (res) => {
-          console.log(res);
+    if (state.user) {
+      resendOtpMutation.mutate(
+        { id: state.user.id },
+        {
+          onSuccess: (res) => {
+            setAlertTitle(res.message);
+            if (!res.success) {
+              setAlertType("error");
+            } else {
+              setAlertType("success");
+            }
+          }
         }
-      }
-    );
-    setTimeLeft(5 * 60);
+      );
+      setTimeLeft(2 * 60);
+    }
   };
 
   useEffect(() => {
@@ -68,10 +81,13 @@ export default function VerifyEmail() {
 
     const interval = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
+      if (timeLeft == 100 && !resendOtpMutation.isPending) {
+        setAlertTitle(undefined);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeLeft]);
+  }, [timeLeft, resendOtpMutation]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -90,8 +106,8 @@ export default function VerifyEmail() {
           <p className="text-muted-foreground text-sm">Enter the OTP sent to your email address.</p>
         </div>
 
-        {/*Error Message */}
-        <FormError title={errorTitle} description={errorDescription} />
+        {/* Form Message */}
+        <FormAlert title={alertTitle} type={alertType} />
 
         {/* OTP Content */}
         <div className="flex justify-center *:not-first:mt-2">
@@ -120,7 +136,12 @@ export default function VerifyEmail() {
             </p>
           ) : (
             <div className="flex justify-center">
-              <Button size="sm" className="w-fit font-semibold" onClick={handleResend}>
+              <Button
+                size="sm"
+                className="w-fit font-semibold"
+                onClick={handleResend}
+                disabled={resendOtpMutation.isPending}
+              >
                 RESEND
               </Button>
             </div>
