@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
-import { ThemeProvider } from "@/providers/theme-provider";
-import { TanstackProvider } from "@/providers/tanstack-provider";
 
 //CSS and Fonts
 import "./globals.css";
 import { poppins, jetbrains, inter } from "@/lib/font";
 
-//context global state
-import ThemeContextProvider from "@/context/theme";
+/**
+ * PROVIDER WRAPPER
+ */
+import { ThemeProvider } from "@/providers/theme-provider";
+import { TanstackProvider } from "@/providers/tanstack-provider";
+//context global state provider
+import ContextProvider from "@/providers/context-provider";
 
 export const metadata: Metadata = {
   title: {
@@ -40,9 +43,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ThemeContextProvider>
-            <TanstackProvider>{children}</TanstackProvider>
-          </ThemeContextProvider>
+          <TanstackProvider>
+            <ContextProvider>{children}</ContextProvider>
+          </TanstackProvider>
         </ThemeProvider>
       </body>
     </html>

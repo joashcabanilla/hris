@@ -1,12 +1,12 @@
 "use client";
 
 //hooks
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 
 //components
-import { Login } from "@/components/shared/loading";
+import { Login, VerifyEmail } from "@/components/shared/loading";
 
 type themeState = {
   theme?: string;
@@ -25,8 +25,8 @@ export default function ThemeContextProvider({ children }: themeContextProviderP
   const pathname = usePathname();
 
   const loading = {
-    "/": <Login isMember={true} />,
-    "/login/": <Login isMember={false} />,
+    "/": <Login />,
+    "/verify-email/": <VerifyEmail />
   }[pathname];
 
   useEffect(() => {
@@ -36,8 +36,10 @@ export default function ThemeContextProvider({ children }: themeContextProviderP
     }
   }, [resolvedTheme]);
 
+  const value = useMemo(() => ({theme, setTheme}), [theme]);
+
   return mounted ? (
-    <themeContext.Provider value={{ theme }}>{children}</themeContext.Provider>
+    <themeContext.Provider value={value}>{children}</themeContext.Provider>
   ) : (
     loading
   );

@@ -5,7 +5,6 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 
 //css utils
 import { cn } from "@/lib/utils";
@@ -39,9 +38,6 @@ import { FormError } from "@/components/shared/form-error";
 import { useLogin, useLockedUser } from "@/services/mutations/auth";
 
 export default function Login() {
-  //router hook
-  const router = useRouter();
-
   //ref hook
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -94,7 +90,7 @@ export default function Login() {
           //save token
           sessionStorage.setItem("token", res.token);
           if (res.message == "Please verify your email to complete the login process.") {
-            router.replace("verify-email");
+            const userData = res.user;
           }
         }
       }

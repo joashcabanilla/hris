@@ -56,7 +56,7 @@ export default function VerifyEmail() {
       { id: "0" },
       {
         onSuccess: (res) => {
-            console.log(res);
+          console.log(res);
         }
       }
     );
