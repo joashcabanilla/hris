@@ -53,7 +53,7 @@ export default function VerifyEmail() {
 
   //handle validate OTP event
   const handleOTP = (otp: string) => {
-    //TODO logic for OTP validation
+    
   };
 
   //handle resend OTP

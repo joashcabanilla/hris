@@ -31,3 +31,4 @@ const fetchRequest = async (method: string, endpoint: string, data: unknown) => 
 export const login = (data: loginProps) => fetchRequest("POST", "login", data);
 export const lockedUser = (data: userIdProps) => fetchRequest("POST", "lockeduser", data);
 export const resendOtp = (data: userIdProps) => fetchRequest("POST", "resendOTP", data);
+export const validateOtp = (data: userIdProps) => fetchRequest("POST", "validateOTP", data);
