@@ -9,8 +9,8 @@ import { poppins, jetbrains, inter } from "@/lib/font";
  */
 import { ThemeProvider } from "@/providers/theme-provider";
 import { TanstackProvider } from "@/providers/tanstack-provider";
-//context global state provider
-import ContextProvider from "@/providers/context-provider";
+//context providers
+import ThemeContextProvider from "@/context/theme-context";
 
 export const metadata: Metadata = {
   title: {
@@ -44,7 +44,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TanstackProvider>
-            <ContextProvider>{children}</ContextProvider>
+            <ThemeContextProvider>{children}</ThemeContextProvider>
           </TanstackProvider>
         </ThemeProvider>
       </body>

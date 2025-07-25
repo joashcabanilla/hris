@@ -20,8 +20,8 @@ import { FormAlert, AlertType } from "@/components/shared/form-alert";
 //Services
 import { useResendOtp } from "@/services/mutations/auth";
 
-//context global state
-import { useAuthContext } from "@/context/auth/auth-context";
+//zustand global state
+import { useAuthStore } from "@/store/auth-store";
 
 function Slot(props: SlotProps) {
   return (
@@ -41,7 +41,7 @@ export default function VerifyEmail() {
   const id = useId();
 
   //global state
-  const { state } = useAuthContext();
+  const userState = useAuthStore((state) => state.user);
 
   //component state
   const [timeLeft, setTimeLeft] = useState(2 * 60);
@@ -58,9 +58,10 @@ export default function VerifyEmail() {
 
   //handle resend OTP
   const handleResend = () => {
-    if (state.user) {
+    console.log(userState);
+    if (userState?.id) {
       resendOtpMutation.mutate(
-        { id: state.user.id },
+        { id: userState.id },
         {
           onSuccess: (res) => {
             setAlertTitle(res.message);

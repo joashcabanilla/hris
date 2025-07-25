@@ -41,8 +41,8 @@ import { FormAlert, AlertType } from "@/components/shared/form-alert";
 //Services
 import { useLogin, useLockedUser } from "@/services/mutations/auth";
 
-//context global state
-import { useAuthContext } from "@/context/auth/auth-context";
+//zustand global state
+import { useAuthStore, type User } from "@/store/auth-store";
 
 export default function Login() {
   //router
@@ -54,7 +54,7 @@ export default function Login() {
   const loginAttempt = useRef(3);
 
   //global state
-  const { dispatch } = useAuthContext();
+  const loginActionState = useAuthStore((state) => state.login);
 
   //states
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -103,19 +103,18 @@ export default function Login() {
           }
         } else {
           Cookies.set("token", res.token, { secure: true, expires: 1 });
-          const payload = {
+          const userState: User = {
             id: res.user.id,
             usertype_id: res.user.usertype_id,
             firstname: res.user.firstname,
             middlename: res.user.middlename,
             lastname: res.user.lastname,
             email: res.user.email,
-            email_verified: res.user.last_login_at && new Date(res.user.last_login_at),
+            email_verified: res.user.email_verified_at && new Date(res.user.last_login_at),
             username: res.user.username,
             status: res.user.status
           };
-          dispatch({ type: "LOGIN", payload: payload });
-
+          loginActionState(userState);
           if (res.message == "Please verify your email to complete the login process.") {
             router.replace("verify-email");
           }
