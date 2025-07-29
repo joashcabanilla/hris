@@ -14,6 +14,11 @@ export interface userIdProps {
   id: string;
 }
 
+export interface validateOtpProps{
+  id: string;
+  otp: string;
+}
+
 const fetchRequest = async (method: string, endpoint: string, data: unknown) => {
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
     method: method,
@@ -31,4 +36,4 @@ const fetchRequest = async (method: string, endpoint: string, data: unknown) => 
 export const login = (data: loginProps) => fetchRequest("POST", "login", data);
 export const lockedUser = (data: userIdProps) => fetchRequest("POST", "lockeduser", data);
 export const resendOtp = (data: userIdProps) => fetchRequest("POST", "resendOTP", data);
-export const validateOtp = (data: userIdProps) => fetchRequest("POST", "validateOTP", data);
+export const verifyEmail = (data: validateOtpProps) => fetchRequest("POST", "verifyEmail", data);

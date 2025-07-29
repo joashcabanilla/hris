@@ -2,6 +2,7 @@
 
 //react hooks
 import { useId, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 //other library hooks
 import { OTPInput, SlotProps, REGEXP_ONLY_DIGITS } from "input-otp";
@@ -18,7 +19,7 @@ import { Copyright } from "@/components/shared/copyright";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
-import { useResendOtp } from "@/services/mutations/auth";
+import { useResendOtp, useVerifyEmail } from "@/services/mutations/auth";
 
 //zustand global state
 import { useAuthStore } from "@/store/auth-store";
@@ -39,29 +40,64 @@ function Slot(props: SlotProps) {
 export default function VerifyEmail() {
   //react hook
   const id = useId();
+  const router = useRouter();
 
   //global state
-  const userState = useAuthStore((state) => state.user);
+  const { user, authenticated, setAuthenticated } = useAuthStore();
 
   //component state
   const [timeLeft, setTimeLeft] = useState(2 * 60);
   const [alertTitle, setAlertTitle] = useState<string | undefined>(undefined);
-  const [alertType, setAlertType] = useState<AlertType>("success");
+  const [alertType, setAlertType] = useState<AlertType | undefined>("success");
 
   //mutations
   const resendOtpMutation = useResendOtp();
+  const verifyEmail = useVerifyEmail();
+
+  useEffect(() => {
+    if (authenticated || !user) {
+      router.replace("/");
+    }
+
+    if (timeLeft === 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timeLeft, resendOtpMutation, authenticated, user, router]);
 
   //handle validate OTP event
   const handleOTP = (otp: string) => {
-    
+    if (user?.id) {
+      verifyEmail.mutate(
+        { id: user?.id, otp: otp },
+        {
+          onSuccess: (res) => {
+            if (!res.success) {
+              setAlertType("error");
+              setAlertTitle(res.message);
+            } else {
+              setAuthenticated(true);
+              router.replace("/employee");
+            }
+          }
+        }
+      );
+    }
+  };
+
+  const handleChangeOTP = () => {
+    setAlertType(undefined);
+    setAlertTitle(undefined);
   };
 
   //handle resend OTP
   const handleResend = () => {
-    console.log(userState);
-    if (userState?.id) {
+    if (user?.id) {
       resendOtpMutation.mutate(
-        { id: userState.id },
+        { id: user.id },
         {
           onSuccess: (res) => {
             setAlertTitle(res.message);
@@ -77,19 +113,6 @@ export default function VerifyEmail() {
     }
   };
 
-  useEffect(() => {
-    if (timeLeft === 0) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => prev - 1);
-      if (timeLeft == 100 && !resendOtpMutation.isPending) {
-        setAlertTitle(undefined);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timeLeft, resendOtpMutation]);
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
       .toString()
@@ -97,6 +120,10 @@ export default function VerifyEmail() {
     const secs = (seconds % 60).toString().padStart(2, "0");
     return `${mins}:${secs}`;
   };
+
+  if (authenticated || !user) {
+    return null;
+  }
 
   return (
     <LoginCard>
@@ -119,6 +146,7 @@ export default function VerifyEmail() {
             containerClassName="flex items-center gap-3 has-disabled:opacity-50"
             maxLength={6}
             onComplete={handleOTP}
+            onChange={handleChangeOTP}
             render={({ slots }) => (
               <div className="flex gap-2">
                 {slots.map((slot, idx) => (

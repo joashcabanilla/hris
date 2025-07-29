@@ -66,7 +66,7 @@ export const VerifyEmail = () => {
             <div className="flex flex-col items-center justify-center gap-2">
               <Skeleton className="h-[35px] w-9/12" />
               <Skeleton className="h-[25px] w-6/12" />
-              <Skeleton className="h-[25px] w-10/12 mt-4" />
+              <Skeleton className="mt-4 h-[25px] w-10/12" />
             </div>
           </div>
         </CardContent>

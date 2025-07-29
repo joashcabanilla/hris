@@ -11,7 +11,7 @@ export type AlertType = "success" | "error";
 interface FormAlertProps {
   title?: string;
   message?: string;
-  type: AlertType;
+  type?: AlertType;
 }
 export const FormAlert = ({ title, message, type }: FormAlertProps) => {
   return (
@@ -20,7 +20,7 @@ export const FormAlert = ({ title, message, type }: FormAlertProps) => {
         variant={type == "error" ? "destructive" : "success"}
         className={cn("border-0", type == "error" ? "bg-destructive/10" : "bg-primary/10")}
       >
-        {type == "error" ? <TriangleAlert /> : <CircleCheckBig />}
+        {type && type == "error" ? <TriangleAlert /> : <CircleCheckBig />}
         <AlertTitle>{title}</AlertTitle>
         {message && <AlertDescription>{message}</AlertDescription>}
       </Alert>

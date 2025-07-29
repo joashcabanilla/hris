@@ -4,11 +4,8 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-
-//cookie library
-import Cookies from "js-cookie";
 
 //css utils
 import { cn } from "@/lib/utils";
@@ -54,13 +51,14 @@ export default function Login() {
   const loginAttempt = useRef(3);
 
   //global state
-  const loginActionState = useAuthStore((state) => state.login);
+  const { setUser, setToken, setUsertype, setAuthenticated, usertype, authenticated } =
+    useAuthStore();
 
   //states
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [alertTitle, setAlertTitle] = useState<string | undefined>(undefined);
   const [alertMessage, setAlertMessage] = useState<string | undefined>(undefined);
-  const [alertType, setAlertType] = useState<AlertType>("success");
+  const [alertType, setAlertType] = useState<AlertType | undefined>("success");
 
   //mutations
   const loginMutation = useLogin();
@@ -72,12 +70,28 @@ export default function Login() {
     defaultValues: { username: "", password: "" }
   });
 
+  useEffect(() => {
+    if (authenticated) {
+      switch (usertype) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+          router.replace("admin");
+          break;
+        case 5:
+          router.replace("employee");
+          break;
+      }
+    }
+  }, [authenticated, usertype, router]);
+
   /**
    * Handle HTML Events
    */
   //handle forgot password event
   const handleForgotPassword = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+    console.log(e);
     //TODO - forgot password function
   };
 
@@ -102,7 +116,8 @@ export default function Login() {
             }
           }
         } else {
-          Cookies.set("token", res.token, { secure: true, expires: 1 });
+          setToken(res.token);
+          setUsertype(parseInt(res.user.usertype_id));
           const userState: User = {
             id: res.user.id,
             usertype_id: res.user.usertype_id,
@@ -114,12 +129,16 @@ export default function Login() {
             username: res.user.username,
             status: res.user.status
           };
-          loginActionState(userState);
+          setUser(userState);
+
           if (res.message == "Please verify your email to complete the login process.") {
             router.replace("verify-email");
+          } else {
+            setAuthenticated(true);
+            router.replace("employee");
           }
-          setAlertType("success");
-          setAlertTitle(res.message);
+          setAlertType(undefined);
+          setAlertTitle(undefined);
         }
       }
     });
@@ -137,6 +156,10 @@ export default function Login() {
         break;
     }
   };
+
+  if (authenticated) {
+    return null;
+  }
 
   return (
     <LoginCard>

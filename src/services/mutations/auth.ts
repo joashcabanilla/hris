@@ -4,8 +4,9 @@ import {
   loginProps,
   lockedUser,
   userIdProps,
+  validateOtpProps,
   resendOtp,
-  validateOtp
+  verifyEmail
 } from "@/services/api/auth";
 
 export const useLogin = () => {
@@ -29,9 +30,9 @@ export const useResendOtp = () => {
   });
 };
 
-export const useValidateOtp = () => {
+export const useVerifyEmail = () => {
   return useMutation({
-    mutationKey: ["authValidateOtp"],
-    mutationFn: (data: userIdProps) => validateOtp(data)
+    mutationKey: ["authVerifyEmail"],
+    mutationFn: (data: validateOtpProps) => verifyEmail(data)
   });
 };
