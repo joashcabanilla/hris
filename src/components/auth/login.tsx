@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { input, inputClear, inputIcon } from "@/lib/tv/global";
 
 //schemas
-import { LoginSchema } from "@/schemas";
+import { LoginSchema } from "@/schemas/auth-schema";
 
 //Icons
 import { UserRound, Lock, Eye, EyeOff, LoaderCircle } from "lucide-react";
@@ -32,7 +32,6 @@ import { Anchor } from "@/components/ui/anchor";
 
 //Components
 import { LoginCard } from "@/components/shared/card";
-import { Copyright } from "@/components/shared/copyright";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
@@ -90,9 +89,8 @@ export default function Login() {
    * Handle HTML Events
    */
   //handle forgot password event
-  const handleForgotPassword = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    console.log(e);
-    //TODO - forgot password function
+  const handleForgotPassword = () => {
+    router.push("forgot-password");
   };
 
   //handle login event
@@ -163,128 +161,125 @@ export default function Login() {
 
   return (
     <LoginCard>
-      <div className="grid gap-4">
-        {/* Form Header */}
-        <div>
-          <h1 className="text-xl font-bold">Login to account</h1>
-          <p className="text-muted-foreground text-sm">
-            Enter your credentials to access your account.
-          </p>
-        </div>
+      {/* Form Header */}
+      <div>
+        <h1 className="text-xl font-bold">Login to account</h1>
+        <p className="text-muted-foreground text-sm">
+          Enter your credentials to access your account.
+        </p>
+      </div>
 
-        {/* Form Message */}
-        <FormAlert title={alertTitle} message={alertMessage} type={alertType} />
+      {/* Form Message */}
+      <FormAlert title={alertTitle} message={alertMessage} type={alertType} />
 
-        {/* Form Content */}
-        <div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(formSubmit, handleError)}>
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold">Username / Email</FormLabel>
-                      <div className="relative">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            ref={usernameRef}
-                            placeholder="Username / Email"
-                            type="text"
-                            autoComplete="false"
-                            disabled={false}
-                            name="username"
-                            className={input()}
-                          />
-                        </FormControl>
-                        <div className={inputIcon()}>
-                          <UserRound size={25} />
-                        </div>
+      {/* Form Content */}
+      <div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(formSubmit, handleError)}>
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-bold">Username / Email</FormLabel>
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          {...field}
+                          ref={usernameRef}
+                          placeholder="Username / Email"
+                          type="text"
+                          autoComplete="false"
+                          disabled={loginMutation.isPending}
+                          name="username"
+                          className={input()}
+                        />
+                      </FormControl>
+                      <div className={inputIcon()}>
+                        <UserRound size={25} />
                       </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base font-bold">Password</FormLabel>
-                      <div className="relative">
-                        <FormControl>
-                          <Input
-                            {...field}
-                            ref={passwordRef}
-                            placeholder="Password"
-                            type={showPassword ? "text" : "password"}
-                            autoComplete="false"
-                            disabled={false}
-                            name="password"
-                            className={input()}
-                          />
-                        </FormControl>
-                        <div className={inputIcon()}>
-                          <Lock size={25} />
-                        </div>
-                        <a
-                          className={cn(
-                            field.value
-                              ? inputClear({ visibility: "show" })
-                              : inputClear({ visibility: "hide" })
-                          )}
-                          aria-label="show password"
-                          onClick={() => {
-                            const passwordType = passwordRef.current?.type;
-                            if (passwordType === "password") {
-                              setShowPassword(true);
-                            } else {
-                              setShowPassword(false);
-                            }
-                          }}
-                        >
-                          {showPassword ? (
-                            <EyeOff size={25} aria-hidden="true" />
-                          ) : (
-                            <Eye size={25} aria-hidden="true" />
-                          )}
-                        </a>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-base font-bold">Password</FormLabel>
+                    <div className="relative">
+                      <FormControl>
+                        <Input
+                          {...field}
+                          ref={passwordRef}
+                          placeholder="Password"
+                          type={showPassword ? "text" : "password"}
+                          autoComplete="false"
+                          disabled={loginMutation.isPending}
+                          name="password"
+                          className={input()}
+                        />
+                      </FormControl>
+                      <div className={inputIcon()}>
+                        <Lock size={25} />
                       </div>
-                      <FormMessage />
-                    </FormItem>
+                      <a
+                        className={cn(
+                          field.value
+                            ? inputClear({ visibility: "show" })
+                            : inputClear({ visibility: "hide" })
+                        )}
+                        aria-label="show password"
+                        onClick={() => {
+                          const passwordType = passwordRef.current?.type;
+                          if (passwordType === "password") {
+                            setShowPassword(true);
+                          } else {
+                            setShowPassword(false);
+                          }
+                        }}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={25} aria-hidden="true" />
+                        ) : (
+                          <Eye size={25} aria-hidden="true" />
+                        )}
+                      </a>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid gap-2">
+                <Anchor
+                  className="justify-end px-0 text-base font-bold"
+                  variant="link"
+                  onClick={handleForgotPassword}
+                >
+                  Forgot Password?
+                </Anchor>
+                <Button
+                  size="lg"
+                  className="text-lg font-bold"
+                  type="submit"
+                  disabled={loginMutation.isPending}
+                >
+                  {loginMutation.isPending ? (
+                    <>
+                      <LoaderCircle className="-ms-2 animate-spin" strokeWidth={3} /> Loading...
+                    </>
+                  ) : (
+                    "Sign In"
                   )}
-                />
-                <div className="grid gap-2">
-                  <Anchor
-                    className="justify-end px-0 text-base font-bold"
-                    variant="link"
-                    onClick={handleForgotPassword}
-                  >
-                    Forgot Password?
-                  </Anchor>
-                  <Button
-                    size="lg"
-                    className="text-lg font-bold"
-                    type="submit"
-                    disabled={loginMutation.isPending}
-                  >
-                    {loginMutation.isPending ? (
-                      <>
-                        <LoaderCircle className="-ms-2 animate-spin" strokeWidth={3} /> Loading...
-                      </>
-                    ) : (
-                      "Sign In"
-                    )}
-                  </Button>
-                </div>
+                </Button>
               </div>
-            </form>
-          </Form>
-        </div>
-        <Copyright />
+            </div>
+          </form>
+        </Form>
       </div>
     </LoginCard>
   );

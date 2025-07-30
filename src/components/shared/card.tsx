@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 //Components
 import { SwitchTheme } from "@/components/shared/switch-theme";
+import { Copyright } from "@/components/shared/copyright";
 
 export const LoginHeader = () => {
   return (
@@ -30,7 +31,12 @@ export const LoginCard = ({ children }: LoginCardProps) => {
   return (
     <Card className={card({ spacing: "topbottom", width: "auth" })}>
       <LoginHeader />
-      <CardContent className="px-0">{children}</CardContent>
+      <CardContent className="px-0">
+        <div className="grid gap-4">
+          {children}
+          <Copyright />
+        </div>
+      </CardContent>
     </Card>
   );
 };

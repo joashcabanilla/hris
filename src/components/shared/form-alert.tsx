@@ -20,7 +20,11 @@ export const FormAlert = ({ title, message, type }: FormAlertProps) => {
         variant={type == "error" ? "destructive" : "success"}
         className={cn("border-0", type == "error" ? "bg-destructive/10" : "bg-primary/10")}
       >
-        {type && type == "error" ? <TriangleAlert /> : <CircleCheckBig />}
+        {type && type == "error" ? (
+          <TriangleAlert strokeWidth={3} size={18} />
+        ) : (
+          <CircleCheckBig strokeWidth={3} size={18} />
+        )}
         <AlertTitle>{title}</AlertTitle>
         {message && <AlertDescription>{message}</AlertDescription>}
       </Alert>

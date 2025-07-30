@@ -18,6 +18,7 @@ interface AuthState {
   token: string | null;
   usertype: number | null;
   authenticated: boolean;
+  resetUser: User | null;
 }
 
 interface AuthActions {
@@ -25,6 +26,7 @@ interface AuthActions {
   setToken: (token: string | null) => void;
   setUsertype: (usertype: number | null) => void;
   setAuthenticated: (authenticated: boolean) => void;
+  setResetUser: (resetUser: User) => void;
 }
 
 type AuthStore = AuthState & AuthActions;
@@ -36,11 +38,13 @@ export const useAuthStore = create<AuthStore>()(
       token: null,
       usertype: null,
       authenticated: false,
+      resetUser: null,
 
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
       setUsertype: (usertype) => set({ usertype }),
-      setAuthenticated: (authenticated) => set({ authenticated })
+      setAuthenticated: (authenticated) => set({ authenticated }),
+      setResetUser: (resetUser) => set({ resetUser })
     }),
     {
       name: "auth-store",

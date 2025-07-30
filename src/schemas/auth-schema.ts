@@ -5,10 +5,12 @@ export const LoginSchema = z.object({
   password: z.string().min(1, "Password is required.")
 });
 
-export const RegisterSchema = z
+export const FindAccountSchema = z.object({
+  email: z.string().min(1, "Email address is required.")
+});
+
+export const ResetUserScheme = z
   .object({
-    memid: z.string().min(1, "Member Id / Passbook No. is required."),
-    email: z.string().min(1, "Email is required.").email("Please enter a valid email address."),
     username: z
       .string()
       .min(1, "Username is required.")

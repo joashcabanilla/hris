@@ -1,12 +1,14 @@
 import { useMutation } from "@tanstack/react-query";
 import {
-  login,
   loginProps,
-  lockedUser,
   userIdProps,
   validateOtpProps,
+  findAccountProps,
+  login,
+  lockedUser,
   resendOtp,
-  verifyEmail
+  verifyEmail,
+  findAccount
 } from "@/services/api/auth";
 
 export const useLogin = () => {
@@ -34,5 +36,12 @@ export const useVerifyEmail = () => {
   return useMutation({
     mutationKey: ["authVerifyEmail"],
     mutationFn: (data: validateOtpProps) => verifyEmail(data)
+  });
+};
+
+export const useFindAccount = () => {
+  return useMutation({
+    mutationKey: ["authFindAccount"],
+    mutationFn: (data: findAccountProps) => findAccount(data)
   });
 };

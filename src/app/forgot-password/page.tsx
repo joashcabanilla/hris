@@ -1,20 +1,20 @@
 //hooks
 import type { Metadata } from "next";
 
-//components
-import VerifyEmail from "@/components/auth/verify-email";
-
 //CSS utils
 import { container } from "@/lib/tv/global";
 
+//components
+import { ForgotPassword } from "@/components/auth/forgot-password";
+
 export const metadata: Metadata = {
-  title: "Email Verification"
+  title: "Forgot Password"
 };
 
-export default function Home() {
+export default function ResetPassword() {
   return (
     <div className={container({ variant: "cardCenter" })}>
-      <VerifyEmail />
+      <ForgotPassword />
     </div>
   );
 }

@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 
 //Components
 import { LoginCard } from "@/components/shared/card";
-import { Copyright } from "@/components/shared/copyright";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
@@ -127,57 +126,53 @@ export default function VerifyEmail() {
 
   return (
     <LoginCard>
-      <div className="grid gap-4">
-        {/* Form Header */}
-        <div>
-          <h1 className="text-xl font-bold">Verify your account</h1>
-          <p className="text-muted-foreground text-sm">Enter the OTP sent to your email address.</p>
-        </div>
+      {/* Form Header */}
+      <div>
+        <h1 className="text-xl font-bold">Verify your account</h1>
+        <p className="text-muted-foreground text-sm">Enter the OTP sent to your email address.</p>
+      </div>
 
-        {/* Form Message */}
-        <FormAlert title={alertTitle} type={alertType} />
+      {/* Form Message */}
+      <FormAlert title={alertTitle} type={alertType} />
 
-        {/* OTP Content */}
-        <div className="flex justify-center *:not-first:mt-2">
-          <OTPInput
-            autoFocus
-            id={id}
-            pattern={REGEXP_ONLY_DIGITS}
-            containerClassName="flex items-center gap-3 has-disabled:opacity-50"
-            maxLength={6}
-            onComplete={handleOTP}
-            onChange={handleChangeOTP}
-            render={({ slots }) => (
-              <div className="flex gap-2">
-                {slots.map((slot, idx) => (
-                  <Slot key={idx} {...slot} />
-                ))}
-              </div>
-            )}
-          />
-        </div>
-
-        {/* Resend OTP */}
-        <div className="flex flex-col justify-center gap-2 text-center">
-          {timeLeft ? (
-            <p className="text-sm font-medium">
-              Resend OTP in <strong>{formatTime(timeLeft)}</strong>
-            </p>
-          ) : (
-            <div className="flex justify-center">
-              <Button
-                size="sm"
-                className="w-fit font-semibold"
-                onClick={handleResend}
-                disabled={resendOtpMutation.isPending}
-              >
-                RESEND
-              </Button>
+      {/* OTP Content */}
+      <div className="flex justify-center *:not-first:mt-2">
+        <OTPInput
+          autoFocus
+          id={id}
+          pattern={REGEXP_ONLY_DIGITS}
+          containerClassName="flex items-center gap-3 has-disabled:opacity-50"
+          maxLength={6}
+          onComplete={handleOTP}
+          onChange={handleChangeOTP}
+          render={({ slots }) => (
+            <div className="flex gap-2">
+              {slots.map((slot, idx) => (
+                <Slot key={idx} {...slot} />
+              ))}
             </div>
           )}
-        </div>
+        />
+      </div>
 
-        <Copyright />
+      {/* Resend OTP */}
+      <div className="flex flex-col justify-center gap-2 text-center">
+        {timeLeft ? (
+          <p className="text-sm font-medium">
+            Resend OTP in <strong>{formatTime(timeLeft)}</strong>
+          </p>
+        ) : (
+          <div className="flex justify-center">
+            <Button
+              size="sm"
+              className="w-fit font-bold"
+              onClick={handleResend}
+              disabled={resendOtpMutation.isPending}
+            >
+              RESEND
+            </Button>
+          </div>
+        )}
       </div>
     </LoginCard>
   );
