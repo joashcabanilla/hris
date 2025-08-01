@@ -145,6 +145,7 @@ export default function VerifyEmail() {
           maxLength={6}
           onComplete={handleOTP}
           onChange={handleChangeOTP}
+          disabled={resendOtpMutation.isPending}
           render={({ slots }) => (
             <div className="flex gap-2">
               {slots.map((slot, idx) => (

@@ -4,7 +4,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 
 //css utils
 import { input, inputIcon } from "@/lib/tv/global";
@@ -23,12 +23,13 @@ import { Button } from "@/components/ui/button";
 //Components
 import { LoginCard } from "@/components/shared/card";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
+import { OtpValidation } from "@/components/shared/otp-validation";
 
 //Services
-import { useFindAccount } from "@/services/mutations/auth";
+import { useFindAccount, useResendOtp, useValidateOtp } from "@/services/mutations/auth";
 
 //global state
-import { useAuthStore } from "@/store/auth-store";
+import { useAuthStore, type User } from "@/store/auth-store";
 
 export function FindAccount() {
   //ref hook
@@ -40,6 +41,8 @@ export function FindAccount() {
   //state variable
   const [alertTitle, setAlertTitle] = useState<string | undefined>(undefined);
   const [alertType, setAlertType] = useState<AlertType | undefined>("success");
+  const [forValidation, setForValidation] = useState<boolean>(false);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
   //use form hook
   const form = useForm<z.infer<typeof FindAccountSchema>>({
@@ -49,6 +52,8 @@ export function FindAccount() {
 
   //api mutations
   const findAccountMutation = useFindAccount();
+  const resendOtpMutation = useResendOtp();
+  const validateOtp = useValidateOtp();
 
   //handle find account event
   const formSubmit = (data: z.infer<typeof FindAccountSchema>) => {
@@ -61,7 +66,9 @@ export function FindAccount() {
           setAlertTitle(res.message);
           setAlertType("error");
         } else {
-          setResetUser(res.user);
+          setForValidation(true);
+          setUser(res.user);
+          resendOtpMutation.mutate({ id: res.user.id });
         }
       }
     });
@@ -77,7 +84,33 @@ export function FindAccount() {
     }
   };
 
-  return (
+  const handleOtpComplete = useCallback(
+    (otp: string) => {
+      if (user) {
+        validateOtp.mutate(
+          {
+            id: user.id,
+            otp: otp
+          },
+          {
+            onSuccess: (res) => {
+              if (!res.success) {
+                setAlertTitle(res.message);
+                setAlertType("error");
+              } else {
+                setResetUser(user);
+              }
+            }
+          }
+        );
+      }
+    },
+    [user, validateOtp, setResetUser]
+  );
+
+  return forValidation ? (
+    <OtpValidation user={user} handleComplete={handleOtpComplete} />
+  ) : (
     <LoginCard>
       {/* Form Header */}
       <div>

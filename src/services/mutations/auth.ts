@@ -4,11 +4,14 @@ import {
   userIdProps,
   validateOtpProps,
   findAccountProps,
+  userCredentialProps,
   login,
   lockedUser,
   resendOtp,
   verifyEmail,
-  findAccount
+  findAccount,
+  validateOtp,
+  updateUserCredential
 } from "@/services/api/auth";
 
 export const useLogin = () => {
@@ -43,5 +46,19 @@ export const useFindAccount = () => {
   return useMutation({
     mutationKey: ["authFindAccount"],
     mutationFn: (data: findAccountProps) => findAccount(data)
+  });
+};
+
+export const useValidateOtp = () => {
+  return useMutation({
+    mutationKey: ["authValidateOtp"],
+    mutationFn: (data: validateOtpProps) => validateOtp(data)
+  });
+};
+
+export const useUpdateUserCredential = () => {
+  return useMutation({
+    mutationKey: ["authUpdateUserCredential"],
+    mutationFn: (data: userCredentialProps) => updateUserCredential(data)
   });
 };

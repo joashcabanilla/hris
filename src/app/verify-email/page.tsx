@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 
 //components
-import VerifyEmail from "@/components/auth/verify-email";
+import VerifyEmail from "@/components/auth/login/verify-email";
 
 //CSS utils
 import { container } from "@/lib/tv/global";

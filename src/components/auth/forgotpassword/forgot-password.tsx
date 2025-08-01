@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
 
 //components
-import { FindAccount } from "@/components/auth/find-account";
-import { ResetPassowrd } from "@/components/auth/reset-password";
+import { FindAccount } from "@/components/auth/forgotpassword/find-account";
+import { ResetPassowrd } from "@/components/auth/forgotpassword/reset-password";
 
 export function ForgotPassword() {
   //router variable

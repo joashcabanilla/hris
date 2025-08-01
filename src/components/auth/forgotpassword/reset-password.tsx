@@ -33,6 +33,10 @@ import { ResetUserScheme } from "@/schemas/auth-schema";
 //global state
 import { useAuthStore } from "@/store/auth-store";
 
+//Services
+import { useUpdateUserCredential } from "@/services/mutations/auth";
+import { ValidationError } from "@/services/api/auth";
+
 export function ResetPassowrd() {
   //ref hook
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -48,6 +52,9 @@ export function ResetPassowrd() {
   const [alertTitle, setAlertTitle] = useState<string | undefined>(undefined);
   const [alertType, setAlertType] = useState<AlertType | undefined>("success");
 
+  //api mutation
+  const updateUserCredential = useUpdateUserCredential();
+
   //use form hook
   const form = useForm<z.infer<typeof ResetUserScheme>>({
     resolver: zodResolver(ResetUserScheme),
@@ -55,7 +62,33 @@ export function ResetPassowrd() {
   });
 
   //handle reset account event
-  const formSubmit = (data: z.infer<typeof ResetUserScheme>) => {};
+  const formSubmit = (data: z.infer<typeof ResetUserScheme>) => {
+    if (resetUser) {
+      updateUserCredential.mutate(
+        {
+          id: resetUser.id.toString(),
+          username: data.username,
+          password: data.password
+        },
+        {
+          onSuccess: (res) => {
+            console.log(res);
+          },
+          onError: (error: ValidationError) => {
+            if (error?.errors) {
+              Object.entries(error.errors).forEach((value) => {
+                const errorData = value[1];
+                if (Array.isArray(errorData)) {
+                  setAlertTitle(errorData[0]);
+                  setAlertType("error");
+                }
+              });
+            }
+          }
+        }
+      );
+    }
+  };
 
   //handle form error
   const handleError = (error: FieldErrors) => {
@@ -92,6 +125,12 @@ export function ResetPassowrd() {
     }
   };
 
+  //handle input focus event
+  const handleInputFocus = () => {
+    setAlertTitle(undefined);
+    setAlertType(undefined);
+  };
+
   return (
     <LoginCard>
       {/* Form Header */}
@@ -122,13 +161,10 @@ export function ResetPassowrd() {
                           placeholder="Username"
                           type="text"
                           autoComplete="false"
-                          disabled={false} //reset account mutation
+                          disabled={updateUserCredential.isPending}
                           name="username"
                           className={input()}
-                          onFocus={() => {
-                            setAlertTitle(undefined);
-                            setAlertType(undefined);
-                          }}
+                          onFocus={handleInputFocus}
                         />
                       </FormControl>
                       <div className={inputIcon()}>
@@ -154,9 +190,10 @@ export function ResetPassowrd() {
                           placeholder="Password"
                           type={showPassword ? "text" : "password"}
                           autoComplete="false"
-                          disabled={false} //reset account mutation
+                          disabled={updateUserCredential.isPending}
                           name="password"
                           className={input()}
+                          onFocus={handleInputFocus}
                         />
                       </FormControl>
                       <div className={inputIcon()}>
@@ -197,9 +234,10 @@ export function ResetPassowrd() {
                           placeholder="Confirm Password"
                           type={showConfirmPassword ? "text" : "password"}
                           autoComplete="false"
-                          disabled={false} //reset account mutation
+                          disabled={updateUserCredential.isPending}
                           name="password"
                           className={input()}
+                          onFocus={handleInputFocus}
                         />
                       </FormControl>
                       <div className={inputIcon()}>
@@ -230,9 +268,9 @@ export function ResetPassowrd() {
                 <Button
                   className="w-full font-bold sm:w-1/3"
                   type="submit"
-                  disabled={false} //reset user mutation
+                  disabled={updateUserCredential.isPending}
                 >
-                  {false ? (
+                  {updateUserCredential.isPending ? (
                     <>
                       <LoaderCircle className="-ms-2 animate-spin" strokeWidth={3} /> Loading...
                     </>

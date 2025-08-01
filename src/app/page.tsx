@@ -1,5 +1,5 @@
 //components
-import Login from "@/components/auth/login";
+import Login from "@/components/auth/login/login";
 
 //CSS utils
 import { container } from "@/lib/tv/global";
