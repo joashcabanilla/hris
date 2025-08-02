@@ -3,13 +3,14 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 //css utils
 import { cn } from "@/lib/utils";
 import { input, inputIcon, inputClear } from "@/lib/tv/global";
 
 //Icons
-import { UserRound, Lock, Eye, EyeOff, LoaderCircle } from "lucide-react";
+import { UserRound, Lock, Eye, EyeOff, LoaderCircle, CircleCheckBig } from "lucide-react";
 
 //shadcn components
 import {
@@ -26,6 +27,7 @@ import { Button } from "@/components/ui/button";
 //Components
 import { LoginCard } from "@/components/shared/card";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
+import AlertDialogComponent from "@/components/shared/alert-dialog";
 
 //form schema
 import { ResetUserScheme } from "@/schemas/auth-schema";
@@ -38,19 +40,26 @@ import { useUpdateUserCredential } from "@/services/mutations/auth";
 import { ValidationError } from "@/services/api/auth";
 
 export function ResetPassowrd() {
+  //router
+  const router = useRouter();
+
   //ref hook
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmpasswordRef = useRef<HTMLInputElement>(null);
 
   //global state
-  const { resetUser } = useAuthStore();
+  const { resetUser, setResetUser } = useAuthStore();
 
   //state variable
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [alertTitle, setAlertTitle] = useState<string | undefined>(undefined);
   const [alertType, setAlertType] = useState<AlertType | undefined>("success");
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [dialogDescription, setDialogDescription] = useState<string>("");
+  const [dialogTitle, setDialogTitle] = useState<string>("");
+  const [dialogIcon, setDialogIcon] = useState<React.ReactNode | null>(null);
 
   //api mutation
   const updateUserCredential = useUpdateUserCredential();
@@ -72,7 +81,12 @@ export function ResetPassowrd() {
         },
         {
           onSuccess: (res) => {
-            console.log(res);
+            if (res?.success) {
+              setDialogTitle("User Credentials Updated");
+              setDialogDescription(res?.message + " Please log in to continue.");
+              setDialogIcon(<CircleCheckBig strokeWidth={2} size={25} className="text-primary"/>);
+              setDialogOpen(true);
+            }
           },
           onError: (error: ValidationError) => {
             if (error?.errors) {
@@ -129,6 +143,13 @@ export function ResetPassowrd() {
   const handleInputFocus = () => {
     setAlertTitle(undefined);
     setAlertType(undefined);
+  };
+
+  //handle confirm dialog event
+  const handleConfirmDialog = () => {
+    setDialogOpen(false);
+    setResetUser(null);
+    router.replace("/");
   };
 
   return (
@@ -283,6 +304,15 @@ export function ResetPassowrd() {
           </form>
         </Form>
       </div>
+      <AlertDialogComponent
+        open={dialogOpen}
+        hasCancle={false}
+        confirmLabel={"Ok"}
+        onConfirm={handleConfirmDialog}
+        description={dialogDescription}
+        title={dialogTitle}
+        icon={dialogIcon}
+      />
     </LoginCard>
   );
 }

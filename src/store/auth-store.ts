@@ -26,7 +26,7 @@ interface AuthActions {
   setToken: (token: string | null) => void;
   setUsertype: (usertype: number | null) => void;
   setAuthenticated: (authenticated: boolean) => void;
-  setResetUser: (resetUser: User) => void;
+  setResetUser: (resetUser: User | null) => void;
 }
 
 type AuthStore = AuthState & AuthActions;
