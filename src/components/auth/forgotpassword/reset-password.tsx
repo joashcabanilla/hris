@@ -147,8 +147,6 @@ export function ResetPassowrd() {
 
   //handle confirm dialog event
   const handleConfirmDialog = () => {
-    setDialogOpen(false);
-    setResetUser(null);
     router.replace("/");
   };
 
@@ -256,7 +254,7 @@ export function ResetPassowrd() {
                           type={showConfirmPassword ? "text" : "password"}
                           autoComplete="false"
                           disabled={updateUserCredential.isPending}
-                          name="password"
+                          name="confirmPassword"
                           className={input()}
                           onFocus={handleInputFocus}
                         />

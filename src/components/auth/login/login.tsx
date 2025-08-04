@@ -50,8 +50,15 @@ export default function Login() {
   const loginAttempt = useRef(3);
 
   //global state
-  const { setUser, setToken, setUsertype, setAuthenticated, usertype, authenticated } =
-    useAuthStore();
+  const {
+    setUser,
+    setToken,
+    setUsertype,
+    setAuthenticated,
+    setResetUser,
+    usertype,
+    authenticated
+  } = useAuthStore();
 
   //states
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -90,6 +97,7 @@ export default function Login() {
    */
   //handle forgot password event
   const handleForgotPassword = () => {
+    setResetUser(null);
     router.push("forgot-password");
   };
 

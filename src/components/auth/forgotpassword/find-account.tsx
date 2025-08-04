@@ -26,10 +26,10 @@ import { FormAlert, AlertType } from "@/components/shared/form-alert";
 import { OtpValidation } from "@/components/shared/otp-validation";
 
 //Services
-import { useFindAccount, useResendOtp, useValidateOtp } from "@/services/mutations/auth";
+import { useFindAccount, useResendOtp } from "@/services/mutations/auth";
 
 //global state
-import { useAuthStore, type User } from "@/store/auth-store";
+import { type User, useAuthStore } from "@/store/auth-store";
 
 export function FindAccount() {
   //ref hook
@@ -53,7 +53,6 @@ export function FindAccount() {
   //api mutations
   const findAccountMutation = useFindAccount();
   const resendOtpMutation = useResendOtp();
-  const validateOtp = useValidateOtp();
 
   //handle find account event
   const formSubmit = (data: z.infer<typeof FindAccountSchema>) => {
@@ -84,32 +83,16 @@ export function FindAccount() {
     }
   };
 
-  const handleOtpComplete = useCallback(
-    (otp: string) => {
-      if (user) {
-        validateOtp.mutate(
-          {
-            id: user.id,
-            otp: otp
-          },
-          {
-            onSuccess: (res) => {
-              if (!res.success) {
-                setAlertTitle(res.message);
-                setAlertType("error");
-              } else {
-                setResetUser(user);
-              }
-            }
-          }
-        );
-      }
-    },
-    [user, validateOtp, setResetUser]
-  );
+  //handle otp success
+  const otpSuccess = useCallback(() => {
+    if (user) {
+      setResetUser(user);
+    }
+  }, [setResetUser, user]);
+  
 
   return forValidation ? (
-    <OtpValidation user={user} handleComplete={handleOtpComplete} />
+    <OtpValidation user={user} otpSuccess={otpSuccess} />
   ) : (
     <LoginCard>
       {/* Form Header */}
@@ -142,7 +125,7 @@ export function FindAccount() {
                           type="text"
                           autoComplete="false"
                           disabled={findAccountMutation.isPending}
-                          name="username"
+                          name="email"
                           className={input()}
                           onFocus={() => {
                             setAlertTitle(undefined);

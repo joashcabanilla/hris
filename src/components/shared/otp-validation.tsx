@@ -17,10 +17,10 @@ import { LoginCard } from "@/components/shared/card";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
-import { useResendOtp } from "@/services/mutations/auth";
+import { useResendOtp, useValidateOtp } from "@/services/mutations/auth";
 
 //global state
-import {type User} from "@/store/auth-store";
+import { type User } from "@/store/auth-store";
 
 function Slot(props: SlotProps) {
   return (
@@ -36,13 +36,15 @@ function Slot(props: SlotProps) {
 }
 
 interface OtpValidationProps {
-    user?: User; 
-    handleComplete: (otp: string) => void;
-};
+  user?: User;
+  otpSuccess: () => void;
+}
 
-export function OtpValidation({user, handleComplete}: OtpValidationProps) {
+export function OtpValidation({ user, otpSuccess }: OtpValidationProps) {
   //react hook
   const id = useId();
+
+
 
   //component state
   const [timeLeft, setTimeLeft] = useState(2 * 60);
@@ -51,6 +53,7 @@ export function OtpValidation({user, handleComplete}: OtpValidationProps) {
 
   //mutations
   const resendOtpMutation = useResendOtp();
+  const validateOtp = useValidateOtp();
 
   useEffect(() => {
     if (timeLeft === 0) return;
@@ -93,6 +96,30 @@ export function OtpValidation({user, handleComplete}: OtpValidationProps) {
       .padStart(2, "0");
     const secs = (seconds % 60).toString().padStart(2, "0");
     return `${mins}:${secs}`;
+  };
+
+  //handle validate OTP event
+  const handleComplete = (otp: string) => {
+    if (user) {
+      validateOtp.mutate(
+        {
+          id: user.id,
+          otp: otp
+        },
+        {
+          onSuccess: (res) => {
+            if (!res.success) {
+              setAlertTitle(res.message);
+              setAlertType("error");
+            } else {
+              setAlertTitle(undefined);
+              setAlertType(undefined);
+              otpSuccess();
+            }
+          }
+        }
+      );
+    }
   };
 
   return (
