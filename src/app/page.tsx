@@ -6,7 +6,7 @@ import { container } from "@/lib/tv/global";
 
 export default function Home() {
   return (
-    <div className={container({ variant: "cardCenter" })}>
+    <div className={container({ variant: "cardCenter", height: "full" })}>
       <Login />
     </div>
   );

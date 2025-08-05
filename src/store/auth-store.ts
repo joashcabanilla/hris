@@ -16,15 +16,13 @@ export type User = {
 interface AuthState {
   user: User | null;
   token: string | null;
-  usertype: number | null;
   authenticated: boolean;
   resetUser: User | null;
 }
 
 interface AuthActions {
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   setToken: (token: string | null) => void;
-  setUsertype: (usertype: number | null) => void;
   setAuthenticated: (authenticated: boolean) => void;
   setResetUser: (resetUser: User | null) => void;
 }
@@ -36,13 +34,11 @@ export const useAuthStore = create<AuthStore>()(
     (set): AuthStore => ({
       user: null,
       token: null,
-      usertype: null,
       authenticated: false,
       resetUser: null,
 
       setUser: (user) => set({ user }),
       setToken: (token) => set({ token }),
-      setUsertype: (usertype) => set({ usertype }),
       setAuthenticated: (authenticated) => set({ authenticated }),
       setResetUser: (resetUser) => set({ resetUser })
     }),
@@ -51,7 +47,7 @@ export const useAuthStore = create<AuthStore>()(
       storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         token: state.token,
-        usertype: state.usertype,
+        user: state.user,
         authenticated: state.authenticated
       })
     }

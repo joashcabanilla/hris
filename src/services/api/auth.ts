@@ -34,10 +34,29 @@ export interface userCredentialProps {
   password: string;
 }
 
-const fetchRequest = async (method: string, endpoint: string, data: unknown) => {
+const fetchRequest = async (method: string, endpoint: string, data?: unknown) => {
+  let token: string | null = null;
+
+  if (typeof window !== "undefined") {
+    const authData = sessionStorage.getItem("auth-store");
+    if (authData) {
+      try {
+        const parsed = JSON.parse(authData);
+        token = parsed?.state?.token ?? null;
+      } catch (error) {
+        console.error("Failed to parse auth-store from sessionStorage", error);
+      }
+    }
+  }
+
+  const headers = {
+    ...defaultHeaders,
+    ...(token && { Authorization: `Bearer ${token}` })
+  };
+
   const res = await fetch(`${BASE_URL}/${endpoint}`, {
     method: method,
-    headers: defaultHeaders,
+    headers: headers,
     body: JSON.stringify(data)
   });
 
@@ -58,3 +77,4 @@ export const findAccount = (data: findAccountProps) => fetchRequest("POST", "fin
 export const validateOtp = (data: validateOtpProps) => fetchRequest("POST", "validateOtp", data);
 export const updateUserCredential = (data: userCredentialProps) =>
   fetchRequest("PATCH", "updateUserCredential", data);
+export const logout = () => fetchRequest("POST", "logout");

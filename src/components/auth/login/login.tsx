@@ -51,12 +51,11 @@ export default function Login() {
 
   //global state
   const {
+    user,
     setUser,
     setToken,
-    setUsertype,
     setAuthenticated,
     setResetUser,
-    usertype,
     authenticated
   } = useAuthStore();
 
@@ -78,19 +77,19 @@ export default function Login() {
 
   useEffect(() => {
     if (authenticated) {
-      switch (usertype) {
+      switch (user?.usertype_id) {
         case 1:
         case 2:
         case 3:
         case 4:
-          router.replace("admin");
+          router.replace("admin/dashboard");
           break;
         case 5:
           router.replace("employee");
           break;
       }
     }
-  }, [authenticated, usertype, router]);
+  }, [authenticated, user, router]);
 
   /**
    * Handle HTML Events
@@ -123,7 +122,6 @@ export default function Login() {
           }
         } else {
           setToken(res.token);
-          setUsertype(parseInt(res.user.usertype_id));
           const userState: User = {
             id: res.user.id,
             usertype_id: res.user.usertype_id,

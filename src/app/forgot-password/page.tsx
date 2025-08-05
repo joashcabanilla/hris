@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function ResetPassword() {
   return (
-    <div className={container({ variant: "cardCenter" })}>
+    <div className={container({ variant: "cardCenter", height: "full" })}>
       <ForgotPassword />
     </div>
   );
