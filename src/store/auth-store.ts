@@ -4,13 +4,11 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export type User = {
   id: string;
   usertype_id: number;
+  profile_picture: string | null;
   firstname: string;
   middlename: string | null;
   lastname: string;
   email: string;
-  email_verified: Date | null;
-  username: string;
-  status: string;
 };
 
 interface AuthState {

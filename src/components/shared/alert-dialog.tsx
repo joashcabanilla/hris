@@ -1,5 +1,3 @@
-import { CircleAlertIcon } from "lucide-react";
-
 import {
   AlertDialog,
   AlertDialogAction,

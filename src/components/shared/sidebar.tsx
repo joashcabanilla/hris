@@ -23,6 +23,9 @@ import { useThemeContext } from "@/context/theme-context";
 //zustand global state
 import { useAuthStore, type User } from "@/store/auth-store";
 
+//Services
+import { useLogout } from "@/services/mutations/auth";
+
 export function AdminSidebar() {
   const { theme } = useThemeContext();
   const { setTheme } = useTheme();
@@ -33,6 +36,9 @@ export function AdminSidebar() {
   //local state
   const [userData, setUserData] = useState<User | undefined>(undefined);
 
+  //mutations
+  const logout = useLogout();
+
   //handle toggle switch theme
   const switchTheme = useCallback(() => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -40,12 +46,19 @@ export function AdminSidebar() {
 
   //handle logout
   const handleLogout = useCallback(() => {
-    setUser(null);
-    setToken(null);
-    setAuthenticated(false);
-  }, [setUser, setToken, setAuthenticated]);
+    logout.mutate(undefined, {
+      onSuccess: () => {
+        setUser(null);
+        setToken(null);
+        setAuthenticated(false);
+      }
+    });
+  }, [setUser, setToken, setAuthenticated, logout]);
 
-  useLayoutEffect(() => { 
+  //handle account settings
+  const handleAccountSetting = useCallback(() => {}, []);
+
+  useLayoutEffect(() => {
     if (user) {
       setUserData(user);
     }
@@ -60,11 +73,12 @@ export function AdminSidebar() {
       <SidebarFooter>
         <SidebarFooterComponent
           name={`${userData?.firstname} ${userData?.lastname}`}
-          email={userData?.email}
-          profilePicture=""
+          email={`${userData?.email}`}
+          profilePicture={userData?.profile_picture ? userData?.profile_picture : ""}
           theme={theme}
           switchTheme={switchTheme}
           logout={handleLogout}
+          accountSetting={handleAccountSetting}
         />
       </SidebarFooter>
       <SidebarRail />

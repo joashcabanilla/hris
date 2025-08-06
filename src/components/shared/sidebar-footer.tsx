@@ -1,9 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
-
 "use client";
 
 //icons
-import { ChevronsUpDown, UserRoundCog, LogOut, Paintbrush } from "lucide-react";
+import { ChevronsUpDown, UserRoundCog, LogOut, Paintbrush, CircleUserRound } from "lucide-react";
 
 //shadcn components
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,11 +26,12 @@ import { Copyright } from "@/components/shared/copyright";
 
 interface SidebarFooterComponentProps {
   name: string;
-  email?: string;
-  profilePicture?: string;
+  email: string;
+  profilePicture: string;
   theme?: string;
   switchTheme: () => void;
   logout: () => void;
+  accountSetting: () => void;
 }
 
 export function SidebarFooterComponent({
@@ -41,6 +40,7 @@ export function SidebarFooterComponent({
   profilePicture,
   theme,
   switchTheme,
+  accountSetting,
   logout
 }: SidebarFooterComponentProps) {
   const { isMobile } = useSidebar();
@@ -57,8 +57,8 @@ export function SidebarFooterComponent({
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={profilePicture} alt={name} />
-                  <AvatarFallback className="rounded-2xl`">
-                    <img alt="logo" src="/logo.png" draggable={false} />
+                  <AvatarFallback className="rounded-2xl">
+                    <CircleUserRound size={50} />
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -79,7 +79,7 @@ export function SidebarFooterComponent({
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={profilePicture} alt={name} />
                     <AvatarFallback className="rounded-2xl">
-                      <img alt="logo" src="/logo.png" draggable={false} />
+                      <CircleUserRound size={50} />
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -95,9 +95,9 @@ export function SidebarFooterComponent({
                   Switch to {theme === "light" ? "dark" : "light"} theme
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={accountSetting}>
                   <UserRoundCog />
-                  Profile details
+                  Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>

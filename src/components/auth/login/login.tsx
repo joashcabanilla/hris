@@ -50,14 +50,7 @@ export default function Login() {
   const loginAttempt = useRef(3);
 
   //global state
-  const {
-    user,
-    setUser,
-    setToken,
-    setAuthenticated,
-    setResetUser,
-    authenticated
-  } = useAuthStore();
+  const { user, setUser, setToken, setAuthenticated, setResetUser, authenticated } = useAuthStore();
 
   //states
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -125,13 +118,11 @@ export default function Login() {
           const userState: User = {
             id: res.user.id,
             usertype_id: res.user.usertype_id,
+            profile_picture: res.user.profile_picture,
             firstname: res.user.firstname,
             middlename: res.user.middlename,
             lastname: res.user.lastname,
             email: res.user.email,
-            email_verified: res.user.email_verified_at && new Date(res.user.last_login_at),
-            username: res.user.username,
-            status: res.user.status
           };
           setUser(userState);
 

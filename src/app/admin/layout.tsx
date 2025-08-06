@@ -1,5 +1,5 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { AdminSidebar } from "@/components/shared/sidebar";
 import { AdminProvider } from "@/providers/admin-provider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

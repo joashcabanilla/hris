@@ -11,7 +11,8 @@ import {
   verifyEmail,
   findAccount,
   validateOtp,
-  updateUserCredential
+  updateUserCredential,
+  logout
 } from "@/services/api/auth";
 
 export const useLogin = () => {
@@ -60,5 +61,12 @@ export const useUpdateUserCredential = () => {
   return useMutation({
     mutationKey: ["authUpdateUserCredential"],
     mutationFn: (data: userCredentialProps) => updateUserCredential(data)
+  });
+};
+
+export const useLogout = () => {
+  return useMutation({
+    mutationKey: ["authLogout"],
+    mutationFn: () => logout()
   });
 };
