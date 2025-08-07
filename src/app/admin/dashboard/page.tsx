@@ -1,10 +1,14 @@
-import { SidebarTrigger } from "@/components/ui/sidebar";
+//hooks
+import type { Metadata } from "next";
+
+//components
+
+import { Dashboard } from "@/components/admin/dashboard";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard"
+};
 
 export default function AdminDashboard() {
-  return (
-    <div className="p-2">
-      <SidebarTrigger className="rounded-2xl" size="lg" />
-      dashboard
-    </div>
-  );
+  return <Dashboard />;
 }

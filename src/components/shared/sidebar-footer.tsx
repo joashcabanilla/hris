@@ -1,7 +1,7 @@
 "use client";
 
 //icons
-import { ChevronsUpDown, UserRoundCog, LogOut, Paintbrush, CircleUserRound } from "lucide-react";
+import { EllipsisVertical, UserRoundCog, LogOut, Paintbrush, CircleUserRound } from "lucide-react";
 
 //shadcn components
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -65,7 +65,7 @@ export function SidebarFooterComponent({
                   <span className="truncate font-bold">{name}</span>
                   <span className="truncate text-xs">{email}</span>
                 </div>
-                <ChevronsUpDown className="ml-auto size-4" />
+                <EllipsisVertical className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
