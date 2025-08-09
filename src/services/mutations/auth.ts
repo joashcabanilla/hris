@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { RefreshTokenHook } from "@/hooks/use-refreshtoken";
 import {
   loginProps,
   userIdProps,
@@ -12,8 +13,12 @@ import {
   findAccount,
   validateOtp,
   updateUserCredential,
-  logout
+  logout,
+  refreshToken
 } from "@/services/api/auth";
+
+//zustand global state
+import { useAuthStore } from "@/store/auth-store";
 
 export const useLogin = () => {
   return useMutation({
@@ -67,6 +72,7 @@ export const useUpdateUserCredential = () => {
 export const useLogout = () => {
   return useMutation({
     mutationKey: ["authLogout"],
-    mutationFn: () => logout()
+    mutationFn: () => logout(),
+    retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
   });
 };

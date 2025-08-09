@@ -1,7 +1,9 @@
 "use client";
 
+//hooks
+import { usePathname, useRouter } from "next/navigation";
 //icons
-import { LayoutDashboard, ChevronRight } from "lucide-react";
+import { LayoutDashboard, ChevronRight, UserRoundCog } from "lucide-react";
 
 //shadcn components
 import {
@@ -18,7 +20,6 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export function AdminSidebarContent() {
-  const menu = [];
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="tracking-wider">Admin Module</SidebarGroupLabel>
@@ -50,12 +51,12 @@ export function AdminSidebarContent() {
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
                     <SidebarMenuSubButton asChild className="cursor-pointer">
-                      <span>
+                      <span className="font-medium">
                         <LayoutDashboard strokeWidth={2} /> Leave Setup 1
                       </span>
                     </SidebarMenuSubButton>
                     <SidebarMenuSubButton asChild className="cursor-pointer">
-                      <span>
+                      <span className="font-medium">
                         <LayoutDashboard strokeWidth={2} /> Leave Setup 2
                       </span>
                     </SidebarMenuSubButton>
@@ -74,6 +75,38 @@ export function EmployeeSidebarContent() {
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="tracking-wider">Employee Module</SidebarGroupLabel>
+    </SidebarGroup>
+  );
+}
+
+interface userSidebarContentProps {
+  handleAccountSetting: () => void;
+}
+
+export function UserSidebarContent({ handleAccountSetting }: userSidebarContentProps) {
+  const pathname = usePathname();
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel className="tracking-wider">User Module</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname.includes("account-settings")}
+              tooltip="Dashboard"
+              className="cursor-pointer"
+              onClick={handleAccountSetting}
+            >
+              <span className="font-medium">
+                <UserRoundCog strokeWidth={pathname.includes("account-settings") ? 3 : 2} />
+                Account Settings
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroupContent>
     </SidebarGroup>
   );
 }

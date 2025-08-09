@@ -65,6 +65,11 @@ const fetchRequest = async (method: string, endpoint: string, data?: unknown) =>
       const errorData: ValidationError = await res.json();
       throw errorData;
     }
+
+    if (res?.status == 401 && res?.statusText == "Unauthorized") {
+      const errorData: { message: string } = await res.json();
+      throw errorData;
+    }
   }
   return res.json();
 };
@@ -78,3 +83,4 @@ export const validateOtp = (data: validateOtpProps) => fetchRequest("POST", "val
 export const updateUserCredential = (data: userCredentialProps) =>
   fetchRequest("PATCH", "updateUserCredential", data);
 export const logout = () => fetchRequest("POST", "logout");
+export const refreshToken = () => fetchRequest("POST", "refreshToken");

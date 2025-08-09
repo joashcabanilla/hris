@@ -2,6 +2,7 @@
 
 //hooks
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 
 //shadcn components
@@ -10,7 +11,11 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/compone
 //components
 import { SidebarHeaderComponent } from "@/components/shared/sidebar-header";
 import { SidebarFooterComponent } from "@/components/shared/sidebar-footer";
-import { AdminSidebarContent, EmployeeSidebarContent } from "@/components/shared/sidebar-content";
+import {
+  AdminSidebarContent,
+  EmployeeSidebarContent,
+  UserSidebarContent
+} from "@/components/shared/sidebar-content";
 
 //context global state
 import { useThemeContext } from "@/context/theme-context";
@@ -22,6 +27,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useLogout } from "@/services/mutations/auth";
 
 export function SidebarComponent() {
+  const router = useRouter();
   const { theme } = useThemeContext();
   const { setTheme } = useTheme();
 
@@ -47,8 +53,10 @@ export function SidebarComponent() {
     });
   }, [setUser, setToken, setAuthenticated, logout]);
 
-  //handle account settings
-  const handleAccountSetting = useCallback(() => {}, []);
+  //handle navigate to account settings
+  const handleAccountSetting = useCallback(() => {
+    router.replace(`/${user?.usertype_id == 5 ? "employee" : "admin"}/account-settings`);
+  }, [router, user]);
 
   return (
     <Sidebar collapsible="offcanvas" variant="inset">
@@ -56,12 +64,15 @@ export function SidebarComponent() {
         <SidebarHeaderComponent />
       </SidebarHeader>
       <SidebarContent>
-        <AdminSidebarContent />
-        <AdminSidebarContent />
-        <AdminSidebarContent />
-        <AdminSidebarContent />
-        <AdminSidebarContent />
-        <EmployeeSidebarContent />
+        {user?.usertype_id == 5 ? (
+          <EmployeeSidebarContent />
+        ) : (
+          <>
+            <AdminSidebarContent />
+            <EmployeeSidebarContent />
+          </>
+        )}
+        <UserSidebarContent handleAccountSetting={handleAccountSetting} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarFooterComponent

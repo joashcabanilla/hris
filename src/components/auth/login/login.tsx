@@ -78,7 +78,7 @@ export default function Login() {
           router.replace("admin/dashboard");
           break;
         case 5:
-          router.replace("employee");
+          router.replace("employee/dashboard");
           break;
       }
     }
@@ -122,7 +122,7 @@ export default function Login() {
             firstname: res.user.firstname,
             middlename: res.user.middlename,
             lastname: res.user.lastname,
-            email: res.user.email,
+            email: res.user.email
           };
           setUser(userState);
 
@@ -130,7 +130,6 @@ export default function Login() {
             router.replace("verify-email");
           } else {
             setAuthenticated(true);
-            router.replace("employee");
           }
           setAlertType(undefined);
           setAlertTitle(undefined);
