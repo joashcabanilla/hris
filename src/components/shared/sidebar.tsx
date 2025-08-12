@@ -24,7 +24,7 @@ import { useThemeContext } from "@/context/theme-context";
 import { useAuthStore } from "@/store/auth-store";
 
 //Services
-import { useLogout } from "@/services/mutations/auth";
+import { useLogout } from "@/services/mutations/auth-mutation";
 
 export function SidebarComponent() {
   const router = useRouter();
@@ -55,7 +55,10 @@ export function SidebarComponent() {
 
   //handle navigate to account settings
   const handleAccountSetting = useCallback(() => {
-    router.replace(`/${user?.usertype_id == 5 ? "employee" : "admin"}/account-settings`);
+    router.replace(`/${user?.usertype_id == 5 ? "employee" : "admin"}/account-settings`, {
+      scroll: false
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [router, user]);
 
   return (

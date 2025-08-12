@@ -1,12 +1,13 @@
 "use client";
 
 //components
-import { MainContentWrapper } from "@/components/shared/main-content";
+import { ContentHeader } from "@/components/shared/content-header";
 
 export function Dashboard() {
   return (
-    <MainContentWrapper mainModule="ADMIN MODULE" subModule="DASHBOARD">
+    <>
+      <ContentHeader mainModule="ADMIN MODULE" subModule="DASHBOARD" />
       <main className="p-4">Admin dashboard content</main>
-    </MainContentWrapper>
+    </>
   );
 }

@@ -1,10 +1,6 @@
 //shadcn components
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-
-//utils
-import { cn } from "@/lib/utils";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,17 +14,11 @@ interface contentHeaderProps {
   mainModule: string;
   subModule: string;
   page?: string;
-  mounted: boolean;
 }
 
-export function ContentHeader({ mainModule, subModule, page, mounted }: contentHeaderProps) {
+export function ContentHeader({ mainModule, subModule, page }: contentHeaderProps) {
   return (
-    <header
-      className={cn(
-        "bg-background flex h-14 shrink-0 items-center gap-2 rounded-t-xl border-b px-4",
-        mounted && "sticky top-0"
-      )}
-    >
+    <header className="bg-background sticky top-0 flex h-14 shrink-0 items-center gap-2 rounded-t-xl border-b px-4">
       <SidebarTrigger className="-ml-1 rounded-4xl" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <Breadcrumb>

@@ -35,7 +35,7 @@ import { LoginCard } from "@/components/shared/card";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
-import { useLogin, useLockedUser } from "@/services/mutations/auth";
+import { useLogin, useLockedUser } from "@/services/mutations/auth-mutation";
 
 //zustand global state
 import { useAuthStore, type User } from "@/store/auth-store";
@@ -75,10 +75,10 @@ export default function Login() {
         case 2:
         case 3:
         case 4:
-          router.replace("admin/dashboard");
+          router.replace("admin/dashboard", { scroll: false });
           break;
         case 5:
-          router.replace("employee/dashboard");
+          router.replace("employee/dashboard", { scroll: false });
           break;
       }
     }

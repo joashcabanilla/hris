@@ -13,12 +13,8 @@ import {
   findAccount,
   validateOtp,
   updateUserCredential,
-  logout,
-  refreshToken
-} from "@/services/api/auth";
-
-//zustand global state
-import { useAuthStore } from "@/store/auth-store";
+  logout
+} from "@/services/api/auth-api";
 
 export const useLogin = () => {
   return useMutation({

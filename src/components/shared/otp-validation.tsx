@@ -17,7 +17,7 @@ import { LoginCard } from "@/components/shared/card";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
-import { useResendOtp, useValidateOtp } from "@/services/mutations/auth";
+import { useResendOtp, useValidateOtp } from "@/services/mutations/auth-mutation";
 
 //global state
 import { type User } from "@/store/auth-store";
@@ -43,8 +43,6 @@ interface OtpValidationProps {
 export function OtpValidation({ user, otpSuccess }: OtpValidationProps) {
   //react hook
   const id = useId();
-
-
 
   //component state
   const [timeLeft, setTimeLeft] = useState(2 * 60);

@@ -1,5 +1,5 @@
 import { useAuthStore } from "@/store/auth-store";
-import { refreshToken } from "@/services/api/auth";
+import { refreshToken } from "@/services/api/auth-api";
 
 export const RefreshTokenHook = (failureCount: number, error: { message: string }) => {
   const { setToken } = useAuthStore.getState();
@@ -9,6 +9,7 @@ export const RefreshTokenHook = (failureCount: number, error: { message: string 
         setToken(res.token);
       }
     });
+    return true;
   }
   return false;
 };

@@ -36,8 +36,8 @@ import { ResetUserScheme } from "@/schemas/auth-schema";
 import { useAuthStore } from "@/store/auth-store";
 
 //Services
-import { useUpdateUserCredential } from "@/services/mutations/auth";
-import { ValidationError } from "@/services/api/auth";
+import { useUpdateUserCredential } from "@/services/mutations/auth-mutation";
+import { ValidationError } from "@/services/api/fetchrequest-api";
 
 export function ResetPassowrd() {
   //router
@@ -49,7 +49,7 @@ export function ResetPassowrd() {
   const confirmpasswordRef = useRef<HTMLInputElement>(null);
 
   //global state
-  const { resetUser, setResetUser } = useAuthStore();
+  const { resetUser } = useAuthStore();
 
   //state variable
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -84,7 +84,7 @@ export function ResetPassowrd() {
             if (res?.success) {
               setDialogTitle("User Credentials Updated");
               setDialogDescription(res?.message + " Please log in to continue.");
-              setDialogIcon(<CircleCheckBig strokeWidth={2} size={25} className="text-primary"/>);
+              setDialogIcon(<CircleCheckBig strokeWidth={2} size={25} className="text-primary" />);
               setDialogOpen(true);
             }
           },

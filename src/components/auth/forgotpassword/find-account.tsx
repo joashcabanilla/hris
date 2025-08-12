@@ -26,7 +26,7 @@ import { FormAlert, AlertType } from "@/components/shared/form-alert";
 import { OtpValidation } from "@/components/shared/otp-validation";
 
 //Services
-import { useFindAccount, useResendOtp } from "@/services/mutations/auth";
+import { useFindAccount, useResendOtp } from "@/services/mutations/auth-mutation";
 
 //global state
 import { type User, useAuthStore } from "@/store/auth-store";
@@ -89,7 +89,6 @@ export function FindAccount() {
       setResetUser(user);
     }
   }, [setResetUser, user]);
-  
 
   return forValidation ? (
     <OtpValidation user={user} otpSuccess={otpSuccess} />

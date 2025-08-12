@@ -18,7 +18,7 @@ import { LoginCard } from "@/components/shared/card";
 import { FormAlert, AlertType } from "@/components/shared/form-alert";
 
 //Services
-import { useResendOtp, useVerifyEmail } from "@/services/mutations/auth";
+import { useResendOtp, useVerifyEmail } from "@/services/mutations/auth-mutation";
 
 //zustand global state
 import { useAuthStore } from "@/store/auth-store";
