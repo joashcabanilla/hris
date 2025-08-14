@@ -21,9 +21,6 @@ import {
   useSidebar
 } from "@/components/ui/sidebar";
 
-//components
-import { Copyright } from "@/components/shared/copyright";
-
 interface SidebarFooterComponentProps {
   name: string;
   email: string;
@@ -109,7 +106,6 @@ export function SidebarFooterComponent({
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
-      <Copyright className="mt-2" />
     </div>
   );
 }

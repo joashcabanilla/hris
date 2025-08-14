@@ -18,7 +18,7 @@ interface contentHeaderProps {
 
 export function ContentHeader({ mainModule, subModule, page }: contentHeaderProps) {
   return (
-    <header className="bg-background sticky top-0 flex h-14 shrink-0 items-center gap-2 rounded-t-xl border-b px-4">
+    <header className="bg-background sticky top-0 z-1 flex h-14 shrink-0 items-center gap-2 rounded-t-xl border-b px-4">
       <SidebarTrigger className="-ml-1 rounded-4xl" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <Breadcrumb>

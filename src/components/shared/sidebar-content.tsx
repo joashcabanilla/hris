@@ -20,6 +20,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export function AdminSidebarContent() {
+  const router = useRouter();
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="tracking-wider">Admin Module</SidebarGroupLabel>
@@ -31,6 +32,12 @@ export function AdminSidebarContent() {
               isActive={false}
               tooltip="Dashboard"
               className="cursor-pointer"
+              onClick={() => {
+                router.replace("/admin/dashboard", {
+                  scroll: false
+                });
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
             >
               <span className="font-medium">
                 <LayoutDashboard strokeWidth={2} />
