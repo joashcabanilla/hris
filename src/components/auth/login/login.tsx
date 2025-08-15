@@ -75,10 +75,10 @@ export default function Login() {
         case 2:
         case 3:
         case 4:
-          router.replace("admin/dashboard", { scroll: false });
+          router.replace("admin/admin-dashboard", { scroll: false });
           break;
         case 5:
-          router.replace("employee/dashboard", { scroll: false });
+          router.replace("employee/employee-dashboard", { scroll: false });
           break;
       }
     }

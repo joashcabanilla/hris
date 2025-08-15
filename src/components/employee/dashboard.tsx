@@ -6,7 +6,7 @@ import { ContentHeader } from "@/components/shared/content-header";
 export function Dashboard() {
   return (
     <>
-      <ContentHeader mainModule="ADMIN MODULE" subModule="DASHBOARD" />
+      <ContentHeader mainModule="EMPLOYEE MODULE" subModule="DASHBOARD" />
       <main className="p-4">employee dashboard content</main>
     </>
   );

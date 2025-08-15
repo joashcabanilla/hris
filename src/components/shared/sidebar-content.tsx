@@ -1,7 +1,7 @@
 "use client";
 
 //hooks
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 //icons
 import { LayoutDashboard, ChevronRight, UserRoundCog } from "lucide-react";
 
@@ -19,32 +19,107 @@ import {
 } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
-export function AdminSidebarContent() {
-  const router = useRouter();
+interface SidebarContentProps {
+  handleChangeMenu: (page: string) => void;
+}
+
+type MenuProps = {
+  title: string;
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+};
+
+export function AdminSidebarContent({ handleChangeMenu }: SidebarContentProps) {
+  const pathname = usePathname();
+  const menu = [
+    {
+      title: "Dashboard",
+      active: pathname.includes("admin-dashboard"),
+      onClick: () => handleChangeMenu("admin-dashboard"),
+      icon: <LayoutDashboard strokeWidth={pathname.includes("admin-dashboard") ? 3 : 2} />
+    }
+  ];
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="tracking-wider">Admin Module</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={false}
-              tooltip="Dashboard"
-              className="cursor-pointer"
-              onClick={() => {
-                router.replace("/admin/dashboard", {
-                  scroll: false
-                });
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-            >
-              <span className="font-medium">
-                <LayoutDashboard strokeWidth={2} />
-                Dashboard
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {menu.map((subMenu) => (
+            <SidebarMenuItem key={subMenu.title}>
+              <SidebarMenuButton
+                asChild
+                isActive={subMenu.active}
+                tooltip={subMenu.title}
+                className="cursor-pointer"
+                onClick={subMenu.onClick}
+              >
+                <span className="font-medium">
+                  {subMenu.icon}
+                  {subMenu.title}
+                </span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}
+
+export function EmployeeSidebarContent({ handleChangeMenu }: SidebarContentProps) {
+  const pathname = usePathname();
+  const menu = [
+    {
+      title: "Dashboard",
+      active: pathname.includes("employee-dashboard"),
+      onClick: () => handleChangeMenu("employee-dashboard"),
+      icon: <LayoutDashboard strokeWidth={pathname.includes("employee-dashboard") ? 3 : 2} />
+    }
+  ];
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel className="tracking-wider">Employee Module</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {menu.map((subMenu) => (
+            <SidebarMenuItem key={subMenu.title}>
+              <SidebarMenuButton
+                asChild
+                isActive={subMenu.active}
+                tooltip={subMenu.title}
+                className="cursor-pointer"
+                onClick={subMenu.onClick}
+              >
+                <span className="font-medium">
+                  {subMenu.icon}
+                  {subMenu.title}
+                </span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}
+
+export function UserSidebarContent({ handleChangeMenu }: SidebarContentProps) {
+  const pathname = usePathname();
+  const menu: MenuProps[] = [
+    {
+      title: "Account Settings",
+      active: pathname.includes("account-settings"),
+      onClick: () => handleChangeMenu("account-settings"),
+      icon: <UserRoundCog strokeWidth={pathname.includes("account-settings") ? 3 : 2} />
+    }
+  ];
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel className="tracking-wider">User Module</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
           <Collapsible asChild defaultOpen={false} className="group/collapsible">
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -72,46 +147,22 @@ export function AdminSidebarContent() {
               </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
-}
-
-export function EmployeeSidebarContent() {
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="tracking-wider">Employee Module</SidebarGroupLabel>
-    </SidebarGroup>
-  );
-}
-
-interface userSidebarContentProps {
-  handleAccountSetting: () => void;
-}
-
-export function UserSidebarContent({ handleAccountSetting }: userSidebarContentProps) {
-  const pathname = usePathname();
-
-  return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="tracking-wider">User Module</SidebarGroupLabel>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              isActive={pathname.includes("account-settings")}
-              tooltip="Dashboard"
-              className="cursor-pointer"
-              onClick={handleAccountSetting}
-            >
-              <span className="font-medium">
-                <UserRoundCog strokeWidth={pathname.includes("account-settings") ? 3 : 2} />
-                Account Settings
-              </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {menu.map((subMenu) => (
+            <SidebarMenuItem key={subMenu.title}>
+              <SidebarMenuButton
+                asChild
+                isActive={subMenu.active}
+                tooltip={subMenu.title}
+                className="cursor-pointer"
+                onClick={subMenu.onClick}
+              >
+                <span className="font-medium">
+                  {subMenu.icon}
+                  {subMenu.title}
+                </span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

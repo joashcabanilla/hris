@@ -28,7 +28,7 @@ interface SidebarFooterComponentProps {
   theme?: string;
   switchTheme: () => void;
   logout: () => void;
-  accountSetting: () => void;
+  handleChangeMenu: (page: string) => void;
 }
 
 export function SidebarFooterComponent({
@@ -37,7 +37,7 @@ export function SidebarFooterComponent({
   profilePicture,
   theme,
   switchTheme,
-  accountSetting,
+  handleChangeMenu,
   logout
 }: SidebarFooterComponentProps) {
   const { isMobile } = useSidebar();
@@ -52,7 +52,7 @@ export function SidebarFooterComponent({
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <Avatar className="h-8 w-8 rounded-full border border-primary">
+                <Avatar className="border-primary h-8 w-8 rounded-full border">
                   <AvatarImage src={profilePicture} alt={name} />
                   <AvatarFallback className="rounded-2xl">
                     <CircleUserRound size={50} />
@@ -73,7 +73,7 @@ export function SidebarFooterComponent({
             >
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-full border border-primary">
+                  <Avatar className="border-primary h-8 w-8 rounded-full border">
                     <AvatarImage src={profilePicture} alt={name} />
                     <AvatarFallback className="rounded-2xl">
                       <CircleUserRound size={50} />
@@ -92,7 +92,7 @@ export function SidebarFooterComponent({
                   Switch to {theme === "light" ? "dark" : "light"} theme
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={accountSetting}>
+                <DropdownMenuItem onClick={() => handleChangeMenu("account-settings")}>
                   <UserRoundCog />
                   Account Settings
                 </DropdownMenuItem>

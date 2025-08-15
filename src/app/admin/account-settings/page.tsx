@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 
 //components
-
 import { AccountSettings as AccountSettingComponent } from "@/components/content/account-settings";
 
 export const metadata: Metadata = {

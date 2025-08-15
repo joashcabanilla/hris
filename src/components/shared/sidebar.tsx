@@ -53,13 +53,16 @@ export function SidebarComponent() {
     });
   }, [setUser, setToken, setAuthenticated, logout]);
 
-  //handle navigate to account settings
-  const handleAccountSetting = useCallback(() => {
-    router.replace(`/${user?.usertype_id == 5 ? "employee" : "admin"}/account-settings`, {
-      scroll: false
-    });
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [router, user]);
+  //handle change menu
+  const handleChangeMenu = useCallback(
+    (page: string) => {
+      router.replace(`/${user?.usertype_id == 5 ? "employee" : "admin"}/${page}`, {
+        scroll: false
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [router, user]
+  );
 
   return (
     <Sidebar collapsible="offcanvas" variant="inset">
@@ -67,15 +70,9 @@ export function SidebarComponent() {
         <SidebarHeaderComponent />
       </SidebarHeader>
       <SidebarContent>
-        {user?.usertype_id == 5 ? (
-          <EmployeeSidebarContent />
-        ) : (
-          <>
-            <AdminSidebarContent />
-            <EmployeeSidebarContent />
-          </>
-        )}
-        <UserSidebarContent handleAccountSetting={handleAccountSetting} />
+        {user?.usertype_id != 5 && <AdminSidebarContent handleChangeMenu={handleChangeMenu} />}
+        <EmployeeSidebarContent handleChangeMenu={handleChangeMenu} />
+        <UserSidebarContent handleChangeMenu={handleChangeMenu} />
       </SidebarContent>
       <SidebarFooter>
         <SidebarFooterComponent
@@ -85,7 +82,7 @@ export function SidebarComponent() {
           theme={theme}
           switchTheme={switchTheme}
           logout={handleLogout}
-          accountSetting={handleAccountSetting}
+          handleChangeMenu={handleChangeMenu}
         />
       </SidebarFooter>
     </Sidebar>

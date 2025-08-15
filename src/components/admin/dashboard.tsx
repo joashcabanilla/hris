@@ -7,7 +7,7 @@ export function Dashboard() {
   return (
     <>
       <ContentHeader mainModule="ADMIN MODULE" subModule="DASHBOARD" />
-      <main className="p-4">Admin dashboard content</main>
+      <main className="p-4">admin dashboard content</main>
     </>
   );
 }
