@@ -2,12 +2,12 @@
 import type { Metadata } from "next";
 
 //components
-import { Dashboard } from "@/components/employee/dashboard";
+import { UserManagement } from "@/components/admin/user-management";
 
 export const metadata: Metadata = {
-  title: "Employee Dashboard"
+  title: "User Management"
 };
 
 export default function EmployeeDashboard() {
-  return <Dashboard />;
+  return <UserManagement />;
 }

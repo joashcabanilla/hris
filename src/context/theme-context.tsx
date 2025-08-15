@@ -36,7 +36,7 @@ export default function ThemeContextProvider({ children }: themeContextProviderP
     }
   }, [resolvedTheme]);
 
-  const value = useMemo(() => ({theme, setTheme}), [theme]);
+  const value = useMemo(() => ({ theme, setTheme }), [theme]);
 
   return mounted ? (
     <themeContext.Provider value={value}>{children}</themeContext.Provider>

@@ -79,7 +79,7 @@ export default function VerifyEmail() {
               setAlertTitle(res.message);
             } else {
               setAuthenticated(true);
-              router.replace("/employee");
+              router.replace("/employee-dashboard");
             }
           }
         }

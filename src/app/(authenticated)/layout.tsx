@@ -5,15 +5,15 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SidebarComponent } from "@/components/shared/sidebar";
 
 //provider wrapper
-import { AdminProvider } from "@/providers/admin-provider";
+import { AuthProvider } from "@/providers/auth-provider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AdminProvider>
+    <AuthProvider>
       <SidebarProvider>
         <SidebarComponent />
         <SidebarInset>{children}</SidebarInset>
       </SidebarProvider>
-    </AdminProvider>
+    </AuthProvider>
   );
 }

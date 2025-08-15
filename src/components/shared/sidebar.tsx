@@ -56,12 +56,12 @@ export function SidebarComponent() {
   //handle change menu
   const handleChangeMenu = useCallback(
     (page: string) => {
-      router.replace(`/${user?.usertype_id == 5 ? "employee" : "admin"}/${page}`, {
+      router.replace(`/${page}`, {
         scroll: false
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [router, user]
+    [router]
   );
 
   return (

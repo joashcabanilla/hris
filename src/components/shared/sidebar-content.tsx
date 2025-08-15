@@ -38,6 +38,12 @@ export function AdminSidebarContent({ handleChangeMenu }: SidebarContentProps) {
       active: pathname.includes("admin-dashboard"),
       onClick: () => handleChangeMenu("admin-dashboard"),
       icon: <LayoutDashboard strokeWidth={pathname.includes("admin-dashboard") ? 3 : 2} />
+    },
+    {
+      title: "User Management",
+      active: pathname.includes("user-management"),
+      onClick: () => handleChangeMenu("user-management"),
+      icon: <UserRoundCog strokeWidth={pathname.includes("user-management") ? 3 : 2} />
     }
   ];
   return (
