@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 
 //components
-import { Dashboard } from "@/components/admin/dashboard";
+import { Dashboard } from "@/components/module/admin/dashboard";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard"

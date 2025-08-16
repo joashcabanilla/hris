@@ -1,7 +1,7 @@
 "use client";
 
 //icons
-import { EllipsisVertical, UserRoundCog, LogOut, Paintbrush, CircleUserRound } from "lucide-react";
+import { EllipsisVertical, Settings2, LogOut, Paintbrush, CircleUserRound } from "lucide-react";
 
 //shadcn components
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -93,7 +93,7 @@ export function SidebarFooterComponent({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleChangeMenu("account-settings")}>
-                  <UserRoundCog />
+                  <Settings2 />
                   Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
