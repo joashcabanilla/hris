@@ -50,9 +50,9 @@ export function SidebarFooterComponent({
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="data-[state=open]:bg-primary data-[state=open]:text-primary-foreground cursor-pointer"
               >
-                <Avatar className="border-primary h-8 w-8 rounded-full border">
+                <Avatar className="h-8 w-8 rounded-full border">
                   <AvatarImage src={profilePicture} alt={name} />
                   <AvatarFallback className="rounded-2xl">
                     <CircleUserRound size={50} />
@@ -88,17 +88,17 @@ export function SidebarFooterComponent({
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={switchTheme}>
-                  <Paintbrush />
+                  <Paintbrush className="hover:text-primary-foreground" />
                   Switch to {theme === "light" ? "dark" : "light"} theme
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleChangeMenu("account-settings")}>
-                  <Settings2 />
+                  <Settings2 className="hover:text-primary-foreground" />
                   Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
-                  <LogOut />
+                  <LogOut className="hover:text-primary-foreground" />
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuGroup>
