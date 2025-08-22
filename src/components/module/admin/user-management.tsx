@@ -1,5 +1,8 @@
 "use client";
 
+//icons
+import { CirclePlus } from "lucide-react";
+
 //shadcn components
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,44 +15,14 @@ import {
   type UserManagementColumnProps
 } from "@/components/table/columns/user-management-column";
 import { DataTable } from "@/components/shared/data-table";
+import { SearchFilter } from "@/components/table/filters/search-filter";
+import { UserTypeFilter } from "@/components/table/filters/usertype-filter";
+
+//temp data
+import { tempData } from "@/lib/utils";
 
 export function UserManagement() {
-  const tempData: UserManagementColumnProps[] = [
-    {
-      id: "1",
-      userType: "Admin",
-      firstname: "John",
-      middlename: null,
-      lastname: "Doe",
-      email: "john.doe@example.com",
-      status: "Active",
-      lastLogIn: "date",
-      lastIp: "192.168.1.1"
-    },
-    {
-      id: "2",
-      userType: "User",
-      firstname: "Jane",
-      middlename: "A.",
-      lastname: "Smith",
-      email: "jane.smith@example.com",
-      status: "Inactive",
-      lastLogIn: "date",
-      lastIp: "10.0.0.5"
-    },
-    {
-      id: "3",
-      userType: "User",
-      firstname: "Peter",
-      middlename: null,
-      lastname: "Jones",
-      email: "peter.jones@example.com",
-      status: "Active",
-      lastLogIn: "date",
-      lastIp: "172.16.2.3"
-    }
-  ];
-
+  const data: UserManagementColumnProps[] = tempData;
   return (
     <div>
       <ContentHeader mainModule="ADMIN MODULE" subModule="USER MANAGEMENT" />
@@ -63,11 +36,18 @@ export function UserManagement() {
           </CardHeader>
           <CardContent>
             {/* User Management Table */}
-            <div className="bg-background flex w-full items-center gap-2 rounded-t-xl p-4">
-              <p>other filters</p>
-              <Button className="">Add User</Button>
+            <div className="bg-background flex flex-wrap items-center justify-between gap-2 rounded-t-xl p-4 shadow-lg">
+              <div className="flex flex-wrap items-center gap-2 md:gap-4">
+                <SearchFilter />
+                <UserTypeFilter />
+              </div>
+              <div className="flex-none">
+                <Button className="font-bold">
+                  <CirclePlus strokeWidth={3} /> Add User
+                </Button>
+              </div>
             </div>
-            <DataTable columns={columns} data={tempData} />
+            <DataTable columns={columns} data={data} />
           </CardContent>
         </Card>
       </main>
