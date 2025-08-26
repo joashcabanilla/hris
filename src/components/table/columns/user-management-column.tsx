@@ -1,4 +1,6 @@
 "use client";
+//utils
+import { formatDateTime } from "@/lib/utils";
 
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -14,77 +16,127 @@ import {
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export type UserManagementColumnProps = {
   id: string;
-  userType: string;
+  usertype: { id: string; usertype: string };
   firstname: string;
   middlename: string | null;
   lastname: string;
   email: string;
   status: string;
-  lastLogIn: string;
-  lastIp: string;
+  deleted_at: Date | null;
+  last_login_at: Date | null;
+  last_login_ip: string | null;
 };
 
 export const columns: ColumnDef<UserManagementColumnProps>[] = [
   {
     accessorKey: "id",
-    header: "Id"
+    header: "Id",
+    enableColumnFilter: false,
+    cell: ({ row }) => <p className="text-center">{row.original.id}</p>
   },
   {
-    accessorKey: "userType",
-    header: "User Type"
+    accessorFn: (row) => row.usertype.usertype,
+    id: "usertype",
+    header: "User Type",
+    cell: ({ row }) => <p className="text-center">{row.original.usertype.usertype}</p>
   },
   {
     accessorKey: "firstname",
-    header: "First Name"
+    header: "First Name",
+    enableColumnFilter: false,
+    cell: ({ row }) => <p className="text-left whitespace-normal">{row.original.firstname}</p>
   },
   {
     accessorKey: "middlename",
-    header: "Middle Name"
+    header: "Middle Name",
+    enableColumnFilter: false,
+    cell: ({ row }) => <p className="text-left whitespace-normal">{row.original.middlename}</p>
   },
   {
     accessorKey: "lastname",
-    header: "Last Name"
+    header: "Last Name",
+    enableColumnFilter: false,
+    cell: ({ row }) => <p className="text-left whitespace-normal">{row.original.lastname}</p>
   },
   {
     accessorKey: "email",
-    header: "Email"
+    header: "Email",
+    enableColumnFilter: false,
+    cell: ({ row }) => <p className="text-center">{row.original.email}</p>
   },
   {
     accessorKey: "status",
-    header: "Status"
+    header: "Status",
+    cell: ({ row }) => {
+      type variantProps = "success" | "warning" | "error";
+      let variant: variantProps = "success";
+      switch (row.original.status) {
+        case "active":
+          variant = "success";
+          break;
+        case "locked":
+          variant = "warning";
+          break;
+        case "deactivated":
+          variant = "error";
+          break;
+      }
+
+      return (
+        <div className="flex w-full items-center justify-center">
+          <Badge variant={variant}>{row.original.status.toUpperCase()}</Badge>
+        </div>
+      );
+    }
   },
   {
-    accessorKey: "lastLogIn",
-    header: "Last Login"
+    accessorKey: "last_login_at",
+    header: "Last Login",
+    enableColumnFilter: false,
+    cell: ({ row }) => (
+      <p className="text-center whitespace-normal">
+        {row.original.last_login_at ? formatDateTime(row.original.last_login_at) : ""}
+      </p>
+    )
   },
   {
-    accessorKey: "lastIp",
-    header: "Last IP Address"
+    accessorKey: "last_login_ip",
+    header: "Last IP Address",
+    enableColumnFilter: false,
+    cell: ({ row }) => (
+      <p className="text-center whitespace-normal">
+        {row.original.last_login_at ? row.original.last_login_ip : ""}
+      </p>
+    )
   },
   {
     accessorKey: "action",
     header: "Action",
-    cell: ({ row }) => {
+    enableColumnFilter: false,
+    cell: () => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="hover:bg-primary/30 focus-visible:ring-[0px]">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
-            <DropdownMenuItem className="text-xs">Copy user ID</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-xs">View user</DropdownMenuItem>
-            <DropdownMenuItem className="text-xs">Edit user</DropdownMenuItem>
-            <DropdownMenuItem className="text-xs">Delete user</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex w-full items-center justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="hover:bg-transparent focus-visible:ring-[0px]">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
+              <DropdownMenuItem className="text-xs">Copy user ID</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-xs">View user</DropdownMenuItem>
+              <DropdownMenuItem className="text-xs">Edit user</DropdownMenuItem>
+              <DropdownMenuItem className="text-xs">Delete user</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       );
     }
   }

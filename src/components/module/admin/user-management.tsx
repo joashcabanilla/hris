@@ -1,7 +1,7 @@
 "use client";
 
 //icons
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, FunnelX } from "lucide-react";
 
 //shadcn components
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,41 +17,74 @@ import {
 import { DataTable } from "@/components/shared/data-table";
 import { SearchFilter } from "@/components/table/filters/search-filter";
 import { UserTypeFilter } from "@/components/table/filters/usertype-filter";
+import { UserStatusFilter } from "@/components/table/filters/userstatus-filter";
 
-//temp data
-import { tempData } from "@/lib/utils";
+//zustand global state
+import { useTableStore } from "@/store/table-store";
+
+//api services
+import { useGetUserList } from "@/services/queries/admin-query";
 
 export function UserManagement() {
-  const data: UserManagementColumnProps[] = tempData;
+  //zustand global state
+  const { setGlobalFilter, setColumnFilters } = useTableStore();
+
+  const getUserList = useGetUserList();
+
+  let dataTable: UserManagementColumnProps[] = [];
+  if (!getUserList.isPending) {
+    const { data } = getUserList.data;
+    dataTable = data.map((user: UserManagementColumnProps) => ({
+      id: user.id,
+      usertype: { id: user.usertype.id, usertype: user.usertype.usertype },
+      firstname: user.firstname,
+      middlename: user.middlename,
+      lastname: user.lastname,
+      email: user.email,
+      status: user.deleted_at ? "deactivated" : user.status,
+      deleted_at: user.deleted_at,
+      last_login_at: user.last_login_at,
+      last_login_ip: user.last_login_ip
+    }));
+  }
+
   return (
-    <div>
-      <ContentHeader mainModule="ADMIN MODULE" subModule="USER MANAGEMENT" />
-      <main className="grid grid-cols-1 p-4">
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle>User Management</CardTitle>
-            <CardDescription>
-              Create, update, and deactivate employee accounts and manage user permissions.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {/* User Management Table */}
-            <div className="bg-background flex flex-wrap items-center justify-between gap-2 rounded-t-xl p-4 shadow-lg">
-              <div className="flex flex-wrap items-center gap-2 md:gap-4">
+    dataTable.length != 0 && (
+      <div>
+        <ContentHeader mainModule="ADMIN MODULE" subModule="USER MANAGEMENT" />
+        <main className="grid grid-cols-1 p-4">
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle>User Management</CardTitle>
+              <CardDescription>
+                Create, update, and deactivate employee accounts and manage user permissions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* User Management Table */}
+              <div className="bg-background flex flex-wrap items-center gap-2 rounded-t-xl p-4 shadow-lg">
                 <SearchFilter />
                 <UserTypeFilter />
-              </div>
-              <div className="flex-none">
-                <Button className="font-bold">
+                <UserStatusFilter />
+                <Button
+                  className="bg-amber-600/90 font-bold hover:bg-amber-600 focus-visible:ring-amber-400"
+                  onClick={() => {
+                    setColumnFilters([]);
+                    setGlobalFilter("");
+                  }}
+                >
+                  <FunnelX strokeWidth={3} /> Clear Filter
+                </Button>
+                <Button className="font-bold xl:ml-auto">
                   <CirclePlus strokeWidth={3} /> Add User
                 </Button>
               </div>
-            </div>
-            <DataTable columns={columns} data={data} />
-          </CardContent>
-        </Card>
-      </main>
-      <Copyright className="mt-0 mb-8 text-sm" />
-    </div>
+              <DataTable columns={columns} data={dataTable} />
+            </CardContent>
+          </Card>
+        </main>
+        <Copyright className="mt-0 mb-8 text-sm" />
+      </div>
+    )
   );
 }

@@ -145,7 +145,7 @@ function PaginationControls<TData>({ table }: { table: ReactTable<TData> }) {
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [tableEntries, setTableEntries] = useState(5);
-  const { globalFilter, setGlobalFilter } = useTableStore();
+  const { globalFilter, setGlobalFilter, columnFilters, setColumnFilters } = useTableStore();
   const pathname = usePathname();
 
   const table = useReactTable({
@@ -155,13 +155,15 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     initialState: {
       pagination: {
         pageSize: tableEntries
       }
     },
     state: {
-      globalFilter
+      globalFilter,
+      columnFilters
     }
   });
 
@@ -171,7 +173,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   useEffect(() => {
     setGlobalFilter("");
-  }, [pathname, setGlobalFilter]);
+    setColumnFilters([]);
+  }, [pathname, setGlobalFilter, setColumnFilters]);
 
   const handleEntries = (value: string) => {
     setTableEntries(parseInt(value));
@@ -187,7 +190,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                 return (
                   <TableHead
                     key={header.id}
-                    className="bg-primary text-primary-foreground pointer-events-none text-sm font-bold"
+                    className="bg-primary text-primary-foreground pointer-events-none text-center text-sm font-bold"
                   >
                     {header.isPlaceholder
                       ? null
@@ -204,7 +207,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                className="bg-background hover:bg-primary/30 border-b-2 text-xs font-medium"
+                className="bg-background hover:bg-primary/15 border-b-2 text-xs font-medium"
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -215,7 +218,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="bg-background h-24 text-center">
+              <TableCell colSpan={columns.length} className="bg-background h-20 text-center">
                 No results.
               </TableCell>
             </TableRow>
@@ -224,7 +227,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       </Table>
       <div className="bg-background flex flex-wrap items-center justify-between gap-2 rounded-b-xl border-t-2 p-2 lg:flex-nowrap">
         <span className="w-full text-center text-sm lg:w-fit">
-          Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}{" "}
+          Showing{" "}
+          {table.getState().pagination.pageIndex * table.getState().pagination.pageSize +
+            (table.getFilteredRowModel().rows.length > 0 ? 1 : 0)}{" "}
           to{" "}
           {Math.min(
             (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,

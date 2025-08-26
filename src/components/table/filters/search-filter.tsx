@@ -13,7 +13,7 @@ export function SearchFilter() {
   const { globalFilter, setGlobalFilter } = useTableStore();
 
   return (
-    <div className="relative grow">
+    <div className="relative w-full md:w-1/2 lg:w-1/3">
       <Search
         className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex h-9 items-center justify-center ps-2 peer-disabled:opacity-50"
         size={25}
