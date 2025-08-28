@@ -1,7 +1,7 @@
 "use client";
 
 //hooks
-import { useState, useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import {
   ColumnDef,
@@ -144,41 +144,47 @@ function PaginationControls<TData>({ table }: { table: ReactTable<TData> }) {
 }
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-  const [tableEntries, setTableEntries] = useState(5);
-  const { globalFilter, setGlobalFilter, columnFilters, setColumnFilters } = useTableStore();
+  const {
+    globalFilter,
+    setGlobalFilter,
+    columnFilters,
+    setColumnFilters,
+    pagination,
+    setPagination
+  } = useTableStore();
+
   const pathname = usePathname();
 
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnFiltersChange: setColumnFilters,
-    initialState: {
-      pagination: {
-        pageSize: tableEntries
-      }
-    },
     state: {
       globalFilter,
-      columnFilters
-    }
+      columnFilters,
+      pagination
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false
   });
-
-  useEffect(() => {
-    table.setPageSize(tableEntries);
-  }, [tableEntries, table]);
 
   useEffect(() => {
     setGlobalFilter("");
     setColumnFilters([]);
-  }, [pathname, setGlobalFilter, setColumnFilters]);
+    setPagination({ pageIndex: 0, pageSize: 5 });
+  }, [pathname, setGlobalFilter, setColumnFilters, setPagination]);
 
-  const handleEntries = (value: string) => {
-    setTableEntries(parseInt(value));
-  };
+  const handleEntries = useCallback(
+    (value: string) => {
+      const size = parseInt(value);
+      setPagination({ pageIndex: 0, pageSize: size });
+    },
+    [setPagination]
+  );
 
   return (
     <div className="rounded-b-xl shadow-lg">

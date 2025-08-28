@@ -4,6 +4,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { poppins, jetbrains, inter } from "@/lib/font";
 
+//notification provider
+import { Toaster } from "@/components/ui/sonner";
+
 /**
  * PROVIDER WRAPPER
  */
@@ -44,7 +47,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TanstackProvider>
-            <ThemeContextProvider>{children}</ThemeContextProvider>
+            <ThemeContextProvider>
+              {children}
+              <Toaster id="globalToast" position="top-right" richColors closeButton />
+            </ThemeContextProvider>
           </TanstackProvider>
         </ThemeProvider>
       </body>

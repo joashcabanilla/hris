@@ -5,7 +5,8 @@ import { formatDateTime } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 
 //icons
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, ArchiveRestore } from "lucide-react";
+
 //shadcn components
 import {
   DropdownMenu,
@@ -31,7 +32,12 @@ export type UserManagementColumnProps = {
   last_login_ip: string | null;
 };
 
-export const columns: ColumnDef<UserManagementColumnProps>[] = [
+interface ColumnsProps {
+  handleDeactivateUser: (user: UserManagementColumnProps) => void;
+}
+export const columns = ({
+  handleDeactivateUser
+}: ColumnsProps): ColumnDef<UserManagementColumnProps>[] => [
   {
     accessorKey: "id",
     header: "Id",
@@ -117,23 +123,41 @@ export const columns: ColumnDef<UserManagementColumnProps>[] = [
     accessorKey: "action",
     header: "Action",
     enableColumnFilter: false,
-    cell: () => {
+    cell: ({ row }) => {
+      const user = row.original;
       return (
         <div className="flex w-full items-center justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="hover:bg-transparent focus-visible:ring-[0px]">
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4" strokeWidth={2} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel className="text-xs">Actions</DropdownMenuLabel>
-              <DropdownMenuItem className="text-xs">Copy user ID</DropdownMenuItem>
+              <DropdownMenuLabel className="text-xs font-bold">Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-xs">View user</DropdownMenuItem>
-              <DropdownMenuItem className="text-xs">Edit user</DropdownMenuItem>
-              <DropdownMenuItem className="text-xs">Delete user</DropdownMenuItem>
+              <DropdownMenuItem
+                variant="default"
+                className="focus:bg-accent focus:text-accent-foreground text-xs font-medium"
+              >
+                <Pencil className="hover:text-primary-foreground" strokeWidth={2} />
+                Update Credentials
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  handleDeactivateUser(user);
+                }}
+                variant={row.original.status == "active" ? "destructive" : "default"}
+                className="focus:bg-accent focus:text-accent-foreground text-xs font-medium"
+              >
+                {row.original.status == "active" ? (
+                  <Trash2 strokeWidth={2} />
+                ) : (
+                  <ArchiveRestore strokeWidth={2} className="hover:text-primary-foreground" />
+                )}
+                {row.original.status == "active" ? "Deactivate" : "Reactivate"}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

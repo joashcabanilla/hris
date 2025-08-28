@@ -7,5 +7,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDateTime(datetime: Date) {
-  return formatInTimeZone(datetime, "Asia/Manila", "mm/dd/yyyy hh:mm:ss a");
+  return formatInTimeZone(datetime, "Asia/Manila", "MM/dd/yyyy hh:mm:ss a");
 }

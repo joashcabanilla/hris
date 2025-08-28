@@ -304,7 +304,7 @@ export function ResetPassowrd() {
       </div>
       <AlertDialogComponent
         open={dialogOpen}
-        hasCancle={false}
+        hasCancel={false}
         confirmLabel={"Ok"}
         onConfirm={handleConfirmDialog}
         description={dialogDescription}

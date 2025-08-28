@@ -16,7 +16,7 @@ import { useTableStore } from "@/store/table-store";
 
 export function UserStatusFilter() {
   //zustand global state
-  const { columnFilters, setColumnFilters } = useTableStore();
+  const { columnFilters, setColumnFilters, setPagination } = useTableStore();
 
   const options = ["Active", "Locked", "Deactivated"];
 
@@ -29,6 +29,7 @@ export function UserStatusFilter() {
             ...old.filter((f) => f.id !== "status"),
             { id: "status", value: status }
           ]);
+          setPagination((old) => ({ ...old, pageIndex: 0 }));
         }}
       >
         <SelectTrigger className="border-primary relative w-full cursor-pointer rounded-xl outline-0 focus-visible:ring-[0px]">

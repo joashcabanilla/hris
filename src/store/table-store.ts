@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ColumnFiltersState, Updater } from "@tanstack/react-table";
+import { ColumnFiltersState, PaginationState, Updater } from "@tanstack/react-table";
 
 interface TableState {
   globalFilter: string;
@@ -9,6 +9,9 @@ interface TableState {
   setColumnFilters: (
     updater: ColumnFiltersState | ((old: ColumnFiltersState) => ColumnFiltersState)
   ) => void;
+
+  pagination: PaginationState;
+  setPagination: (updater: Updater<PaginationState>) => void;
 }
 
 export const useTableStore = create<TableState>((set) => ({
@@ -21,6 +24,15 @@ export const useTableStore = create<TableState>((set) => ({
       columnFilters:
         typeof updater === "function"
           ? (updater as (old: ColumnFiltersState) => ColumnFiltersState)(state.columnFilters)
+          : updater
+    })),
+
+  pagination: { pageIndex: 0, pageSize: 5 },
+  setPagination: (updater) =>
+    set((state) => ({
+      pagination:
+        typeof updater === "function"
+          ? (updater as (old: PaginationState) => PaginationState)(state.pagination)
           : updater
     }))
 }));

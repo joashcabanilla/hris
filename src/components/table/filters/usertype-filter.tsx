@@ -21,7 +21,7 @@ export function UserTypeFilter() {
   const getUsertyleList = useGetUsertypeList();
 
   //zustand global state
-  const { columnFilters, setColumnFilters } = useTableStore();
+  const { columnFilters, setColumnFilters, setPagination } = useTableStore();
 
   if (getUsertyleList.isPending) {
     return (
@@ -33,6 +33,7 @@ export function UserTypeFilter() {
               ...old.filter((f) => f.id !== "usertype"),
               { id: "usertype", value: usertype }
             ]);
+            setPagination((old) => ({ ...old, pageIndex: 0 }));
           }}
         >
           <SelectTrigger className="border-primary relative w-full cursor-pointer rounded-xl">
@@ -52,6 +53,7 @@ export function UserTypeFilter() {
               ...old.filter((f) => f.id !== "usertype"),
               { id: "usertype", value: usertype }
             ]);
+            setPagination((old) => ({ ...old, pageIndex: 0 }));
           }}
         >
           <SelectTrigger className="border-primary relative w-full cursor-pointer rounded-xl outline-0 focus-visible:ring-[0px]">

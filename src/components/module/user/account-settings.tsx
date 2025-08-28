@@ -490,7 +490,7 @@ export function AccountSettings() {
       <Copyright className="mt-0 mb-8 text-sm" />
       <AlertDialogComponent
         open={dialogOpen}
-        hasCancle={false}
+        hasCancel={false}
         confirmLabel={"Ok"}
         onConfirm={handleConfirmDialog}
         description={dialogDescription}

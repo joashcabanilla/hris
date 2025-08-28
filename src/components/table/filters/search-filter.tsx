@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useTableStore } from "@/store/table-store";
 
 export function SearchFilter() {
-  const { globalFilter, setGlobalFilter } = useTableStore();
+  const { globalFilter, setGlobalFilter, setPagination } = useTableStore();
 
   return (
     <div className="relative w-full md:w-1/2 lg:w-1/3">
@@ -22,7 +22,10 @@ export function SearchFilter() {
         name="searchfilter"
         placeholder="Search"
         value={globalFilter ?? ""}
-        onChange={(e) => setGlobalFilter(e.target.value)}
+        onChange={(e) => {
+          setGlobalFilter(e.target.value);
+          setPagination((old) => ({ ...old, pageIndex: 0 }));
+        }}
         className="peer border-primary h-9 rounded-xl ps-7 indent-1 text-sm font-normal"
       />
     </div>
