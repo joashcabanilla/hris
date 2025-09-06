@@ -50,12 +50,12 @@ export function SidebarFooterComponent({
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-primary data-[state=open]:text-primary-foreground cursor-pointer"
+                className="data-[state=open]:bg-primary data-[state=open]:text-primary-foreground hover:[&>span[data-slot=avatar]]:border-primary-foreground data-[state=open]:[&>span[data-slot=avatar]]:border-primary-foreground hover:[&_[data-slot=avatar-fallback-svg]]:stroke-primary data-[state=open]:[&_[data-slot=avatar-fallback-svg]]:stroke-primary cursor-pointer"
               >
-                <Avatar className="h-8 w-8 rounded-full border">
+                <Avatar className="border-primary h-8 w-8 rounded-full border">
                   <AvatarImage src={profilePicture} alt={name} />
                   <AvatarFallback className="rounded-2xl">
-                    <CircleUserRound size={50} />
+                    <CircleUserRound size={50} data-slot="avatar-fallback-svg" />
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

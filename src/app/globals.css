@@ -151,7 +151,8 @@
   }
 
   [data-sidebar="content"],
-  [data-slot="table-container"] {
+  [data-slot="table-container"],
+  [data-slot="dialog-content"] {
     @apply scrollbar-thin;
   }
 }

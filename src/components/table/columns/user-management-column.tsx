@@ -26,6 +26,7 @@ export type UserManagementColumnProps = {
   middlename: string | null;
   lastname: string;
   email: string;
+  username: string;
   status: string;
   deleted_at: Date | null;
   last_login_at: Date | null;
@@ -34,9 +35,11 @@ export type UserManagementColumnProps = {
 
 interface ColumnsProps {
   handleDeactivateUser: (user: UserManagementColumnProps) => void;
+  handleUpdateCredentials: (user: UserManagementColumnProps) => void;
 }
 export const columns = ({
-  handleDeactivateUser
+  handleDeactivateUser,
+  handleUpdateCredentials
 }: ColumnsProps): ColumnDef<UserManagementColumnProps>[] => [
   {
     accessorKey: "id",
@@ -138,16 +141,16 @@ export const columns = ({
               <DropdownMenuLabel className="text-xs font-bold">Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
+                onClick={() => handleUpdateCredentials(user)}
                 variant="default"
                 className="focus:bg-accent focus:text-accent-foreground text-xs font-medium"
+                disabled={row.original.status == "deactivated"}
               >
                 <Pencil className="hover:text-primary-foreground" strokeWidth={2} />
                 Update Credentials
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => {
-                  handleDeactivateUser(user);
-                }}
+                onClick={() => handleDeactivateUser(user)}
                 variant={row.original.status == "active" ? "destructive" : "default"}
                 className="focus:bg-accent focus:text-accent-foreground text-xs font-medium"
               >

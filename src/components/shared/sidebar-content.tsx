@@ -40,6 +40,12 @@ export function AdminSidebarContent({ handleChangeMenu }: SidebarContentProps) {
       icon: <LayoutDashboard strokeWidth={pathname.includes("admin-dashboard") ? 3 : 2} />
     },
     {
+      title: "Employee Management",
+      active: pathname.includes("employee-management"),
+      onClick: () => handleChangeMenu("employee-management"),
+      icon: <UserRoundCog strokeWidth={pathname.includes("employee-management") ? 3 : 2} />
+    },
+    {
       title: "User Management",
       active: pathname.includes("user-management"),
       onClick: () => handleChangeMenu("user-management"),

@@ -9,6 +9,7 @@ export interface updateUserInfoProps {
   email: string;
   username?: string;
   password?: string;
+  usertype?: number;
 }
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL! + "/account";
 
