@@ -311,7 +311,7 @@ export function UserManagement() {
             <CardHeader>
               <CardTitle>User Management</CardTitle>
               <CardDescription>
-                Create, update, and deactivate employee accounts and manage user permissions.
+                Update user credentials, and manage user reactivation and deactivation.
               </CardDescription>
             </CardHeader>
             <CardContent>

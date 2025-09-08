@@ -8,6 +8,6 @@ export const metadata: Metadata = {
   title: "User Management"
 };
 
-export default function EmployeeDashboard() {
+export default function Home() {
   return <UserManagement />;
 }
