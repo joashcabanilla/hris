@@ -97,7 +97,7 @@ export function UserManagement() {
 
   //tanstack api query
   const getUserList = useGetUserList();
-  const getUsertypeleList = useGetUsertypeList();
+  const getUsertypeList = useGetUsertypeList();
   const updateUserStatusMutation = useUpdateUserStatus();
   const updateUserInfoMutation = useUpdateUserInfo();
 
@@ -110,9 +110,11 @@ export function UserManagement() {
     dataTable = data.map((user: UserManagementColumnProps) => ({
       id: user.id,
       usertype: { id: user.usertype.id, usertype: user.usertype.usertype },
+      prefix: user.prefix,
       firstname: user.firstname,
       middlename: user.middlename,
       lastname: user.lastname,
+      suffix: user.suffix,
       email: user.email,
       username: user.username,
       status: user.deleted_at ? "deactivated" : user.status,
@@ -221,7 +223,7 @@ export function UserManagement() {
   const handleUpdateCredentials = useCallback(
     (user: UserManagementColumnProps) => {
       updateCredentialsForm.reset({
-        name: `${user.firstname} ${user.middlename} ${user.lastname}`,
+        name: `${user.prefix} ${user.firstname} ${user.middlename} ${user.lastname} ${user.suffix == null ? "" : user.suffix}`,
         usertype: user.usertype.id.toString(),
         email: user.email,
         username: user.username,
@@ -254,9 +256,11 @@ export function UserManagement() {
               id: res.user.id,
               usertype_id: res.user.usertype_id,
               profile_picture: res.user.profile_picture,
+              prefix: res.user.prefix,
               firstname: res.user.firstname,
               middlename: res.user.middlename,
               lastname: res.user.lastname,
+              suffix: res.user.suffix,
               email: res.user.email
             });
           }
@@ -303,7 +307,7 @@ export function UserManagement() {
 
   return (
     dataTable.length > 0 &&
-    !getUsertypeleList.isPending && (
+    !getUsertypeList.isPending && (
       <div>
         <ContentHeader mainModule="ADMIN MODULE" subModule="USER MANAGEMENT" />
         <main className="grid grid-cols-1 p-4">
@@ -318,7 +322,7 @@ export function UserManagement() {
               {/* User Management Table */}
               <div className="bg-background flex flex-wrap items-center gap-2 rounded-t-xl p-4 shadow-lg">
                 <SearchFilter />
-                <UserTypeFilter getUsertypeleList={getUsertypeleList} />
+                <UserTypeFilter getUsertypeList={getUsertypeList} />
                 <UserStatusFilter />
                 <Button
                   className="bg-amber-600/90 font-bold hover:bg-amber-600 focus-visible:ring-amber-400"
@@ -435,7 +439,7 @@ export function UserManagement() {
                                 <SelectContent>
                                   <SelectGroup>
                                     <SelectLabel>User Type List</SelectLabel>
-                                    {getUsertypeleList.data.data.map(
+                                    {getUsertypeList.data.data.map(
                                       (value: {
                                         id: number;
                                         usertype: string;

@@ -119,9 +119,11 @@ export default function Login() {
             id: res.user.id,
             usertype_id: res.user.usertype_id,
             profile_picture: res.user.profile_picture,
+            prefix: res.user.prefix,
             firstname: res.user.firstname,
             middlename: res.user.middlename,
             lastname: res.user.lastname,
+            suffix: res.user.suffix,
             email: res.user.email
           };
           setUser(userState);

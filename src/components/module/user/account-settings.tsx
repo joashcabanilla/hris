@@ -28,6 +28,15 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
 //components
@@ -39,6 +48,9 @@ import { Copyright } from "@/components/shared/copyright";
 //zustand global state
 import { useAuthStore } from "@/store/auth-store";
 
+//get query services
+import { useGetPrefixSuffixList } from "@/services/queries/account-query";
+
 //mutation services
 import { useUpdateProfilePicture, useUpdateUserInfo } from "@/services/mutations/account-mutation";
 import { ValidationError } from "@/services/api/fetchrequest-api";
@@ -46,13 +58,18 @@ import { ValidationError } from "@/services/api/fetchrequest-api";
 export function AccountSettings() {
   //ref hook
   const profileRef = useRef<HTMLInputElement>(null);
+  const prefixRef = useRef<HTMLInputElement>(null);
   const firstnameRef = useRef<HTMLInputElement>(null);
   const middlenameRef = useRef<HTMLInputElement>(null);
   const lastnameRef = useRef<HTMLInputElement>(null);
+  const suffixRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
   const confirmPasswordRef = useRef<HTMLInputElement>(null);
+
+  //tanstack api query
+  const getPrefixSuffixList = useGetPrefixSuffixList();
 
   //mutation hook
   const updateProfilePictureMutation = useUpdateProfilePicture();
@@ -80,9 +97,11 @@ export function AccountSettings() {
   const formUserInfo = useForm<z.infer<typeof UpdateUserInfoSchema>>({
     resolver: zodResolver(UpdateUserInfoSchema),
     defaultValues: {
+      prefix: user?.prefix,
       firstname: user?.firstname,
       middlename: user?.middlename || "",
       lastname: user?.lastname,
+      suffix: user?.suffix || "",
       email: user?.email,
       username: "",
       password: "",
@@ -125,9 +144,11 @@ export function AccountSettings() {
     if (user) {
       const formData = {
         id: user.id.toString(),
+        prefix: data.prefix,
         firstname: data.firstname,
         middlename: data.middlename || undefined,
         lastname: data.lastname,
+        suffix: data.suffix == "" ? "None" : data.suffix,
         email: data.email,
         username: data.username || undefined,
         password: data.password || undefined
@@ -139,9 +160,11 @@ export function AccountSettings() {
               id: res.user.id,
               usertype_id: res.user.usertype_id,
               profile_picture: res.user.profile_picture,
+              prefix: res.user.prefix,
               firstname: res.user.firstname,
               middlename: res.user.middlename,
               lastname: res.user.lastname,
+              suffix: res.user.suffix,
               email: res.user.email
             });
             setDialogTitle("Account Information Updated");
@@ -199,20 +222,27 @@ export function AccountSettings() {
 
   type typeElement = {
     name:
+      | "prefix"
       | "username"
       | "password"
       | "confirmPassword"
       | "firstname"
       | "middlename"
       | "lastname"
+      | "suffix"
       | "email";
     label: string;
     type?: string;
     ref: RefObject<HTMLInputElement | null>;
   };
 
-  //name input element array
+  //input element array
   const nameElementList: typeElement[] = [
+    {
+      name: "prefix",
+      label: "Prefix",
+      ref: prefixRef
+    },
     {
       name: "firstname",
       label: "First Name",
@@ -227,11 +257,12 @@ export function AccountSettings() {
       name: "lastname",
       label: "Last Name",
       ref: lastnameRef
-    }
-  ];
-
-  //credentials input element array
-  const credentialElementList: typeElement[] = [
+    },
+    {
+      name: "suffix",
+      label: "Suffix",
+      ref: suffixRef
+    },
     {
       name: "email",
       type: "email",
@@ -257,6 +288,10 @@ export function AccountSettings() {
       ref: confirmPasswordRef
     }
   ];
+
+  if (getPrefixSuffixList.isPending) {
+    return null;
+  }
 
   return (
     <div>
@@ -331,7 +366,7 @@ export function AccountSettings() {
                 className="grid gap-4"
                 onSubmit={formUserInfo.handleSubmit(formUserInfoSubmit, formUserInfoError)}
               >
-                {/* name input element */}
+                {/*input elements */}
                 <div className="grid items-start gap-4 lg:grid-cols-3">
                   {nameElementList.map((element) => (
                     <FormField
@@ -340,68 +375,80 @@ export function AccountSettings() {
                       name={element.name}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-bold">{element.label}</FormLabel>
+                          <FormLabel className="font-bold" htmlFor={field.name}>
+                            {element.label}
+                          </FormLabel>
                           <div className="relative">
                             <FormControl>
-                              <Input
-                                {...field}
-                                ref={element.ref}
-                                placeholder={element.label}
-                                type="text"
-                                autoComplete="false"
-                                disabled={updateUserInfoMutation.isPending}
-                                name={element.name}
-                                className={cn(
-                                  input(),
-                                  "border-primary h-10 border-1 ps-1 text-sm font-medium placeholder:font-normal"
-                                )}
-                                onFocus={() => {
-                                  setUserAlertTitle("");
-                                }}
-                              />
-                            </FormControl>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ))}
-                </div>
+                              {element.name == "prefix" || element.name == "suffix" ? (
+                                <Select onValueChange={field.onChange} {...field}>
+                                  <SelectTrigger
+                                    className="border-primary w-full cursor-pointer rounded-xl border-1 text-sm font-medium data-[placeholder]:font-normal"
+                                    name={field.name}
+                                    id={field.name}
+                                    onFocus={() => {
+                                      setUserAlertTitle("");
+                                    }}
+                                    onClick={() => {
+                                      setUserAlertTitle("");
+                                    }}
+                                    size="lg"
+                                  >
+                                    <SelectValue placeholder={element.label} />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectLabel>{element.label} List</SelectLabel>
+                                      {element.name == "prefix" &&
+                                        getPrefixSuffixList.data.data.prefix.map(
+                                          (value: string) => (
+                                            <SelectItem key={value} value={value}>
+                                              {value}
+                                            </SelectItem>
+                                          )
+                                        )}
 
-                {/* credentials input element */}
-                <div className="grid items-start gap-4 lg:grid-cols-2">
-                  {credentialElementList.map((element) => (
-                    <FormField
-                      key={element.name}
-                      control={formUserInfo.control}
-                      name={element.name}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-bold">{element.label}</FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input
-                                {...field}
-                                ref={element.ref}
-                                placeholder={element.label}
-                                type={
-                                  element.name == "password" && showPassword
-                                    ? "text"
-                                    : element.name == "confirmPassword" && showConfirmPassword
+                                      {element.name == "suffix" && (
+                                        <SelectItem key="None" value="None">
+                                          None
+                                        </SelectItem>
+                                      )}
+                                      {element.name == "suffix" &&
+                                        getPrefixSuffixList.data.data.suffix.map(
+                                          (value: string) => (
+                                            <SelectItem key={value} value={value}>
+                                              {value}
+                                            </SelectItem>
+                                          )
+                                        )}
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <Input
+                                  {...field}
+                                  id={field.name}
+                                  ref={element.ref}
+                                  placeholder={element.label}
+                                  type={
+                                    element.name == "password" && showPassword
                                       ? "text"
-                                      : element.type
-                                }
-                                autoComplete="false"
-                                disabled={updateUserInfoMutation.isPending}
-                                name={element.name}
-                                className={cn(
-                                  input(),
-                                  "border-primary h-10 border-1 ps-1 text-sm font-medium placeholder:font-normal"
-                                )}
-                                onFocus={() => {
-                                  setUserAlertTitle("");
-                                }}
-                              />
+                                      : element.name == "confirmPassword" && showConfirmPassword
+                                        ? "text"
+                                        : element.type
+                                  }
+                                  autoComplete="false"
+                                  disabled={updateUserInfoMutation.isPending}
+                                  name={element.name}
+                                  className={cn(
+                                    input(),
+                                    "border-primary h-10 border-1 ps-1 text-sm font-medium placeholder:font-normal"
+                                  )}
+                                  onFocus={() => {
+                                    setUserAlertTitle("");
+                                  }}
+                                />
+                              )}
                             </FormControl>
 
                             {/* show password button */}

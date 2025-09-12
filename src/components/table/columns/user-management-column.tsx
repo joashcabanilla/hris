@@ -22,9 +22,11 @@ import { Badge } from "@/components/ui/badge";
 export type UserManagementColumnProps = {
   id: string;
   usertype: { id: string; usertype: string };
+  prefix: string;
   firstname: string;
   middlename: string | null;
   lastname: string;
+  suffix: string | null;
   email: string;
   username: string;
   status: string;

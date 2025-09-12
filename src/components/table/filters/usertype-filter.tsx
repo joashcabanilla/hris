@@ -30,15 +30,15 @@ type UserType = {
 };
 
 interface UserTypeFilterProps {
-  getUsertypeleList: UseQueryResult<UserType, Error>;
+  getUsertypeList: UseQueryResult<UserType, Error>;
 }
 
-export function UserTypeFilter({ getUsertypeleList }: UserTypeFilterProps) {
+export function UserTypeFilter({ getUsertypeList }: UserTypeFilterProps) {
   //zustand global state
   const { columnFilters, setColumnFilters, setPagination } = useTableStore();
 
-  if (getUsertypeleList.data) {
-    const { data } = getUsertypeleList.data;
+  if (getUsertypeList.data) {
+    const { data } = getUsertypeList.data;
     return (
       <div className="w-full md:w-[150px]">
         <Select

@@ -5,9 +5,11 @@ export type User = {
   id: string;
   usertype_id: number;
   profile_picture: string | null;
+  prefix: string;
   firstname: string;
   middlename: string | null;
   lastname: string;
+  suffix: string | null;
   email: string;
 };
 

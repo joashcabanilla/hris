@@ -10,6 +10,8 @@ export interface updateUserInfoProps {
   username?: string;
   password?: string;
   usertype?: number;
+  prefix?: string;
+  suffix?: string;
 }
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL! + "/account";
 
@@ -18,3 +20,6 @@ export const updateProfilePicture = (data: updateProfilePictureProps) =>
 
 export const updateUserInfo = (data: updateUserInfoProps) =>
   fetchRequest(BASE_URL, "POST", "updateUserInfo", data);
+
+//GET METHOD
+export const getPrefixSuffixList = () => fetchRequest(BASE_URL, "GET", "getPrefixSuffixList");
