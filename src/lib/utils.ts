@@ -9,3 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function formatDateTime(datetime: Date) {
   return formatInTimeZone(datetime, "Asia/Manila", "MM/dd/yyyy hh:mm:ss a");
 }
+
+export function formatDate(date: Date) {
+  return formatInTimeZone(date, "Asia/Manila", "MM/dd/yyyy");
+}

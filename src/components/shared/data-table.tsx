@@ -197,6 +197,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                   <TableHead
                     key={header.id}
                     className="bg-primary text-primary-foreground pointer-events-none text-center text-sm font-bold"
+                    style={{width: header.getSize()}}
                   >
                     {header.isPlaceholder
                       ? null

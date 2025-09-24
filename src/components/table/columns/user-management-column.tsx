@@ -46,6 +46,7 @@ export const columns = ({
   {
     accessorKey: "id",
     header: "Id",
+    size: 50,
     enableColumnFilter: false,
     cell: ({ row }) => <p className="text-center">{row.original.id}</p>
   },
@@ -58,18 +59,21 @@ export const columns = ({
   {
     accessorKey: "firstname",
     header: "First Name",
+    size: 250,
     enableColumnFilter: false,
     cell: ({ row }) => <p className="text-left whitespace-normal">{row.original.firstname}</p>
   },
   {
     accessorKey: "middlename",
     header: "Middle Name",
+    size: 250,
     enableColumnFilter: false,
     cell: ({ row }) => <p className="text-left whitespace-normal">{row.original.middlename}</p>
   },
   {
     accessorKey: "lastname",
     header: "Last Name",
+    size: 250,
     enableColumnFilter: false,
     cell: ({ row }) => <p className="text-left whitespace-normal">{row.original.lastname}</p>
   },
@@ -127,6 +131,7 @@ export const columns = ({
   {
     accessorKey: "action",
     header: "Action",
+    size: 50,
     enableColumnFilter: false,
     cell: ({ row }) => {
       const user = row.original;

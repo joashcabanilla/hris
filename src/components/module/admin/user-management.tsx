@@ -55,6 +55,7 @@ import { UserStatusFilter } from "@/components/table/filters/userstatus-filter";
 import AlertDialogComponent from "@/components/shared/alert-dialog";
 import { FormModal } from "@/components/shared/form-modal";
 import { FormAlert } from "@/components/shared/form-alert";
+import { ClearFilterButton } from "@/components/table/filters/clear-filter";
 
 //zustand global state
 import { useTableStore } from "@/store/table-store";
@@ -324,16 +325,7 @@ export function UserManagement() {
                 <SearchFilter />
                 <UserTypeFilter getUsertypeList={getUsertypeList} />
                 <UserStatusFilter />
-                <Button
-                  className="bg-amber-600/90 font-bold hover:bg-amber-600 focus-visible:ring-amber-400"
-                  onClick={() => {
-                    setColumnFilters([]);
-                    setGlobalFilter("");
-                    setPagination((old) => ({ ...old, pageIndex: 0 }));
-                  }}
-                >
-                  <FunnelX strokeWidth={3} /> Clear Filter
-                </Button>
+                <ClearFilterButton />
               </div>
               <DataTable columns={column} data={dataTable} />
             </CardContent>
