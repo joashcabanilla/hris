@@ -4,7 +4,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
-import { useCallback, useState, useRef, RefObject } from "react";
+import { useCallback, useState, useRef, RefObject, useLayoutEffect } from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { input, inputClear } from "@/lib/tv/global";
 
 //icons
-import { FunnelX, CircleAlert, Info, EyeOff, Eye, LoaderCircle } from "lucide-react";
+import { CircleAlert, Info, EyeOff, Eye, LoaderCircle } from "lucide-react";
 
 //shadcn components
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,6 +89,7 @@ export function UserManagement() {
   } | null>(null);
   const [updateCredentialsAlertTitle, setUpdateCredentialsAlertTitle] = useState<string>("");
   const [selectUsertypeOpen, setSelectUsertypeOpen] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
 
   //useRef
   const emailRef = useRef<HTMLInputElement>(null);
@@ -306,6 +307,17 @@ export function UserManagement() {
 
   const column = columns({ handleDeactivateUser, handleUpdateCredentials });
 
+  useLayoutEffect(() => {
+    setGlobalFilter("");
+    setColumnFilters([]);
+    setPagination({ pageIndex: 0, pageSize: 5 });
+    setMounted(true);
+  }, [setGlobalFilter, setColumnFilters, setPagination, setMounted]);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     dataTable.length > 0 &&
     !getUsertypeList.isPending && (
@@ -321,8 +333,8 @@ export function UserManagement() {
             </CardHeader>
             <CardContent>
               {/* User Management Table */}
-              <div className="bg-background flex flex-wrap items-center gap-2 rounded-t-xl p-4 shadow-lg">
-                <SearchFilter />
+              <div className="bg-background flex flex-wrap items-center gap-3 rounded-t-xl p-4 shadow-lg">
+                <SearchFilter classname="lg:w-1/4" />
                 <UserTypeFilter getUsertypeList={getUsertypeList} />
                 <UserStatusFilter />
                 <ClearFilterButton />

@@ -1,8 +1,7 @@
 "use client";
 
 //hooks
-import { useEffect, useCallback } from "react";
-import { usePathname } from "next/navigation";
+import { useCallback } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -153,8 +152,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     setPagination
   } = useTableStore();
 
-  const pathname = usePathname();
-
   const table = useReactTable({
     data,
     columns,
@@ -171,12 +168,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex: false
   });
-
-  useEffect(() => {
-    setGlobalFilter("");
-    setColumnFilters([]);
-    setPagination({ pageIndex: 0, pageSize: 5 });
-  }, [pathname, setGlobalFilter, setColumnFilters, setPagination]);
 
   const handleEntries = useCallback(
     (value: string) => {
@@ -197,7 +188,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                   <TableHead
                     key={header.id}
                     className="bg-primary text-primary-foreground pointer-events-none text-center text-sm font-bold"
-                    style={{width: header.getSize()}}
+                    style={{ width: header.getSize() }}
                   >
                     {header.isPlaceholder
                       ? null
