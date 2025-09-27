@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+//data table type
+import { HiddenColumnDef } from "@/components/shared/data-table";
+
 export type EmployeeManagementColumnProps = {
   id: string;
   employeeNo: string;
@@ -56,7 +59,7 @@ export type EmployeeManagementColumnProps = {
   philhealth: string;
 };
 
-export const columns = (): ColumnDef<EmployeeManagementColumnProps>[] => [
+export const columns = (): HiddenColumnDef<EmployeeManagementColumnProps, boolean>[] => [
   {
     accessorKey: "id",
     header: "Id",
@@ -97,6 +100,11 @@ export const columns = (): ColumnDef<EmployeeManagementColumnProps>[] => [
     accessorKey: "department",
     header: "Department",
     cell: ({ row }) => <p className="text-center">{row.original.department}</p>
+  },
+  {
+    accessorKey: "position",
+    header: "Department",
+    hidden: true
   },
   {
     accessorKey: "employmentStatus",

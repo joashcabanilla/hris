@@ -40,7 +40,6 @@ import {
 
 //zustand global state
 import { useTableStore } from "@/store/table-store";
-import { boolean } from "zod";
 
 export function EmployeeManagement() {
   //zustand global state
@@ -99,6 +98,7 @@ export function EmployeeManagement() {
               <div className="bg-background flex flex-wrap items-center gap-3 rounded-t-xl p-4 shadow-lg">
                 <SearchFilter classname="md:w-auto lg:w-1/2 xl:w-1/4" />
                 <ComboboxFilter
+                  filterId="department"
                   placeholder="Department"
                   options={getDepartmentList.data.data.map(
                     (value: { department: string }) => value.department
@@ -106,6 +106,7 @@ export function EmployeeManagement() {
                   classname="w-full md:w-auto"
                 />
                 <ComboboxFilter
+                  filterId="position"
                   placeholder="Position"
                   options={getPositionList.data.data.map(
                     (value: { position: string }) => value.position

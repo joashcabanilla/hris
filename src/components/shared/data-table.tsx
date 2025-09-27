@@ -39,8 +39,12 @@ import { Button } from "@/components/ui/button";
 //zustand globla state
 import { useTableStore } from "@/store/table-store";
 
+export type HiddenColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
+  hidden?: boolean;
+};
+
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+  columns: HiddenColumnDef<TData, TValue>[];
   data: TData[];
 }
 
@@ -152,13 +156,24 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     setPagination
   } = useTableStore();
 
+  const columnVisibility = Object.fromEntries(
+    columns.map((col) => {
+      const key =
+        "accessorKey" in col && typeof col.accessorKey === "string"
+          ? col.accessorKey
+          : (col.id ?? "");
+      return [key, !col.hidden];
+    })
+  );
+
   const table = useReactTable({
     data,
     columns,
     state: {
       globalFilter,
       columnFilters,
-      pagination
+      pagination,
+      columnVisibility
     },
     onGlobalFilterChange: setGlobalFilter,
     onColumnFiltersChange: setColumnFilters,
