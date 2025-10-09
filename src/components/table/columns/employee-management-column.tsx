@@ -3,9 +3,6 @@
 //utils
 import { formatDate } from "@/lib/utils";
 
-//tanstack table
-import { ColumnDef } from "@tanstack/react-table";
-
 //shadcn components
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -59,7 +56,13 @@ export type EmployeeManagementColumnProps = {
   philhealth: string;
 };
 
-export const columns = (): HiddenColumnDef<EmployeeManagementColumnProps, boolean>[] => [
+interface ColumnsProps {
+  handleViewEmployee: (employee: EmployeeManagementColumnProps) => void;
+}
+
+export const columns = ({
+  handleViewEmployee
+}: ColumnsProps): HiddenColumnDef<EmployeeManagementColumnProps, boolean>[] => [
   {
     accessorKey: "id",
     header: "Id",
@@ -77,7 +80,11 @@ export const columns = (): HiddenColumnDef<EmployeeManagementColumnProps, boolea
       return (
         <div className="flex items-center gap-3">
           <Avatar className="border-primary h-9 w-9 rounded-full border">
-            <AvatarImage src={employee.profile_picture ?? undefined} alt={employee.name} />
+            <AvatarImage
+              src={employee.profile_picture ?? undefined}
+              alt={employee.name}
+              draggable={false}
+            />
             <AvatarFallback className="rounded-2xl">
               <CircleUserRound size={50} />
             </AvatarFallback>
@@ -143,7 +150,8 @@ export const columns = (): HiddenColumnDef<EmployeeManagementColumnProps, boolea
     header: "Action",
     size: 50,
     enableColumnFilter: false,
-    cell: () => {
+    cell: ({ row }) => {
+      const data = row.original;
       return (
         <div className="flex w-full items-center justify-center">
           <DropdownMenu>
@@ -157,11 +165,12 @@ export const columns = (): HiddenColumnDef<EmployeeManagementColumnProps, boolea
               <DropdownMenuLabel className="text-xs font-bold">Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
+                onClick={() => handleViewEmployee(data)}
                 variant="default"
                 className="focus:bg-accent focus:text-accent-foreground text-xs font-medium"
               >
                 <View className="hover:text-primary-foreground" strokeWidth={2} />
-                View Employee
+                View Details
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

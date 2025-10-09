@@ -25,10 +25,10 @@ export const useGetUserList = () => {
   });
 };
 
-export const useGetEmployeeList = () => {
+export const useGetEmployeeList = (queryParams: string | null) => {
   return useQuery({
-    queryKey: ["adminGetEmployeeList"],
-    queryFn: () => getEmployeeList(),
+    queryKey: ["adminGetEmployeeList", queryParams],
+    queryFn: () => getEmployeeList(queryParams),
     retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
   });
 };

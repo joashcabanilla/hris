@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { isValid, parse } from "date-fns";
 
 export const updateCredentialsSchema = z
   .object({
@@ -28,3 +29,42 @@ export const updateCredentialsSchema = z
     message: "Passwords do not match.",
     path: ["confirmPassword"]
   });
+
+export const employeeSchema = z.object({
+  profile: z
+    .instanceof(File)
+    .refine((file) => ["image/jpeg", "image/jpg", "image/png"].includes(file.type), {
+      message: "Only JPEG, JPG and PNG images are allowed."
+    })
+    .refine((file) => file.size <= 1_048_576, {
+      message: "Profile picture size must not exceed 1MB."
+    })
+    .nullable(),
+  prefix: z.string().min(1, "Prefix is required."),
+  firstname: z
+    .string()
+    .min(1, "First name is required.")
+    .min(2, "First name must be at least 2 characters.")
+    .regex(/^[a-zA-ZñÑ -]+$/, "First name can only contain letters, hyphens, and spaces."),
+  middlename: z
+    .string()
+    .min(2, "Middle name must be at least 2 characters.")
+    .regex(/^[a-zA-ZñÑ -]+$/, "Middle name can only contain letters, hyphens, and spaces.")
+    .or(z.literal("")),
+  lastname: z
+    .string()
+    .min(1, "Last name is required.")
+    .min(2, "Last name must be at least 2 characters.")
+    .regex(/^[a-zA-ZñÑ -]+$/, "Last name can only contain letters, hyphens, and spaces."),
+  suffix: z.string().min(1, "Suffix is required.").or(z.literal("")),
+  gender: z.string().min(1, "Gender is required."),
+  birthdate: z
+    .string()
+    .min(1, "Date of birth is required.")
+    .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), "Use MM/DD/YYYY format.")
+    .refine((val) => {
+      const parsed = parse(val, "MM/dd/yyyy", new Date());
+      return isValid(parsed);
+    }, "Invalid date format."),
+  email: z.email("Invalid email address.").min(1, "Email is required.")
+});

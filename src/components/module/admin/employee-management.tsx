@@ -2,6 +2,7 @@
 
 //hooks
 import { useState, useLayoutEffect } from "react";
+import { useRouter } from "next/navigation";
 
 //icons
 import { UserPlus } from "lucide-react";
@@ -42,11 +43,14 @@ import {
 import { useTableStore } from "@/store/table-store";
 
 export function EmployeeManagement() {
+  //router hook
+  const router = useRouter();
+
   //zustand global state
   const { setGlobalFilter, setColumnFilters, setPagination } = useTableStore();
 
   //tanstack api query
-  const getEmployeeList = useGetEmployeeList();
+  const getEmployeeList = useGetEmployeeList(null);
   const getDepartmentList = useGetDepartmentList();
   const getPositionList = useGetPositionList();
   const getEmploymentStatusList = useGetEmploymentStatusList();
@@ -54,13 +58,24 @@ export function EmployeeManagement() {
   //local state
   const [mounted, setMounted] = useState<boolean>(false);
 
-  const column = columns();
   let dataTable: EmployeeManagementColumnProps[] = [];
 
   if (!getEmployeeList.isPending) {
     const { data } = getEmployeeList.data;
     dataTable = data;
   }
+
+  //handle add employee click event
+  const handleAddEmployee = () => {
+    router.replace("employee");
+  };
+
+  //handle view employee click event
+  const handleViewEmployee = (employee: EmployeeManagementColumnProps) => {
+    router.replace("employee?id=" + employee.id);
+  };
+
+  const column = columns({ handleViewEmployee });
 
   useLayoutEffect(() => {
     setGlobalFilter("");
@@ -88,7 +103,7 @@ export function EmployeeManagement() {
                 Create employee accounts, manage records, and update employee details.
               </CardDescription>
               <CardAction className="col-start-1 row-start-3 mt-2 self-center justify-self-start md:col-start-2 md:row-start-1 md:mt-0 md:justify-self-end">
-                <Button className="font-bold">
+                <Button className="font-bold" onClick={handleAddEmployee}>
                   <UserPlus strokeWidth={3} /> Add Employee
                 </Button>
               </CardAction>
