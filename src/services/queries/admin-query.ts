@@ -6,7 +6,9 @@ import {
   getEmployeeList,
   getDepartmentList,
   getPositionList,
-  getEmploymentStatusList
+  getEmploymentStatusList,
+  getCivilStatusList,
+  getRegionList
 } from "@/services/api/admin-api";
 
 export const useGetUsertypeList = () => {
@@ -53,6 +55,22 @@ export const useGetEmploymentStatusList = () => {
   return useQuery({
     queryKey: ["adminGetEmploymentStatusList"],
     queryFn: () => getEmploymentStatusList(),
+    retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
+  });
+};
+
+export const useGetCivilStatusList = () => {
+  return useQuery({
+    queryKey: ["adminGetCivilStatusList"],
+    queryFn: () => getCivilStatusList(),
+    retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
+  });
+};
+
+export const useGetRegionList = () => {
+  return useQuery({
+    queryKey: ["adminGetRegionList"],
+    queryFn: () => getRegionList(),
     retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
   });
 };

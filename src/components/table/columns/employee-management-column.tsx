@@ -38,7 +38,6 @@ export type EmployeeManagementColumnProps = {
   birthdate: Date;
   gender: string;
   civilStatus: string;
-  citizenship: string;
   contactNo: string;
   region: number;
   province: number;

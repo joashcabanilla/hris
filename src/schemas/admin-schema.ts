@@ -66,5 +66,18 @@ export const employeeSchema = z.object({
       const parsed = parse(val, "MM/dd/yyyy", new Date());
       return isValid(parsed);
     }, "Invalid date format."),
-  email: z.email("Invalid email address.").min(1, "Email is required.")
+  civilStatus: z.string().min(1, "Civil status is required."),
+  email: z.email("Invalid email address.").min(1, "Email is required."),
+  contactNo: z
+    .string()
+    .min(11, "Contact number must be at least 11 digits.")
+    .max(11, "Contact number must not exceed 11 digits.")
+    .regex(/^09\d{9}$/, "Contact number must start with 09 and contain 11 digits."),
+  emergencyContactName: z.string().min(1, "Emergency contact name is required."),
+  emergencyContactNo: z
+    .string()
+    .min(11, "Emergency contact number must be at least 11 digits.")
+    .max(11, "Emergency contact number must not exceed 11 digits.")
+    .regex(/^09\d{9}$/, "Emergency contact number must start with 09 and contain 11 digits."),
+  region: z.string().min(1, "Region is required.")
 });

@@ -11,6 +11,8 @@ export const getDepartmentList = () => fetchRequest(BASE_URL, "GET", "getDepartm
 export const getPositionList = () => fetchRequest(BASE_URL, "GET", "getPositionList");
 export const getEmploymentStatusList = () =>
   fetchRequest(BASE_URL, "GET", "getEmploymentStatusList");
+export const getCivilStatusList = () => fetchRequest(BASE_URL, "GET", "getCivilStatusList");
+export const getRegionList = () => fetchRequest(BASE_URL, "GET", "getRegionList");
 
 export interface UserStatusProps {
   id: string;

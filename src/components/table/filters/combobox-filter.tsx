@@ -67,7 +67,7 @@ export const ComboboxFilter = ({
         <Command>
           <CommandInput placeholder={"Search " + placeholder} className="h-9" />
           <CommandList>
-            <CommandEmpty>No {placeholder} found.</CommandEmpty>
+            <CommandEmpty>No {placeholder} Found.</CommandEmpty>
             <CommandGroup>
               {options.map((option: string) => (
                 <CommandItem

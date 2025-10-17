@@ -18,6 +18,8 @@ import { ContentHeader } from "@/components/shared/content-header";
 import { type EmployeeManagementColumnProps } from "@/components/table/columns/employee-management-column";
 import { FormAlert } from "@/components/shared/form-alert";
 import { DatePicker } from "@/components/shared/datepicker";
+import { Combobox } from "@/components/shared/combobox";
+import { Copyright } from "@/components/shared/copyright";
 
 //shadcn components
 import {
@@ -54,7 +56,11 @@ import { Anchor } from "@/components/ui/anchor";
 import { employeeSchema } from "@/schemas/admin-schema";
 
 //api services
-import { useGetEmployeeList } from "@/services/queries/admin-query";
+import {
+  useGetEmployeeList,
+  useGetCivilStatusList,
+  useGetRegionList
+} from "@/services/queries/admin-query";
 import { useGetPrefixSuffixList } from "@/services/queries/account-query";
 
 export function Employee() {
@@ -62,12 +68,20 @@ export function Employee() {
   const router = useRouter();
 
   //ref hook
+  const prefixRef = useRef<HTMLButtonElement>(null);
   const profileRef = useRef<HTMLInputElement>(null);
   const firstnameRef = useRef<HTMLInputElement>(null);
   const middlenameRef = useRef<HTMLInputElement>(null);
   const lastnameRef = useRef<HTMLInputElement>(null);
+  const suffixRef = useRef<HTMLButtonElement>(null);
+  const genderRef = useRef<HTMLButtonElement>(null);
   const birthdateRef = useRef<HTMLInputElement>(null);
+  const civilStatusRef = useRef<HTMLButtonElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
+  const contactNoRef = useRef<HTMLInputElement>(null);
+  const emergencyContactNameRef = useRef<HTMLInputElement>(null);
+  const emergencyContactNoRef = useRef<HTMLInputElement>(null);
+  const regionRef = useRef<HTMLButtonElement>(null);
 
   //local state
   const [profileAlertTitle, setProfileAlertTitle] = useState<string>("");
@@ -76,11 +90,14 @@ export function Employee() {
 
   const searchParams = useSearchParams();
   const employeeId = searchParams.get("id");
+
   //tanstack api query
   const getEmployeeList = useGetEmployeeList(
     employeeId === null ? employeeId : `?employeeId=${employeeId}`
   );
   const getPrefixSuffixList = useGetPrefixSuffixList();
+  const getCivilStatusList = useGetCivilStatusList();
+  const getRegionList = useGetRegionList();
 
   //zod validation form
   const employeeForm = useForm<z.infer<typeof employeeSchema>>({
@@ -94,7 +111,12 @@ export function Employee() {
       suffix: "",
       gender: "",
       birthdate: "",
-      email: ""
+      civilStatus: "",
+      email: "",
+      contactNo: "",
+      emergencyContactName: "",
+      emergencyContactNo: "",
+      region: ""
     }
   });
 
@@ -105,6 +127,9 @@ export function Employee() {
   const employeeFormError = (error: FieldErrors) => {
     const firstError = Object.keys(error)[0];
     switch (firstError) {
+      case "prefix":
+        prefixRef.current?.focus();
+        break;
       case "firstname":
         firstnameRef.current?.focus();
         break;
@@ -114,11 +139,32 @@ export function Employee() {
       case "lastname":
         lastnameRef.current?.focus();
         break;
+      case "suffix":
+        suffixRef.current?.focus();
+        break;
+      case "gender":
+        genderRef.current?.focus();
+        break;
       case "birthdate":
         birthdateRef.current?.focus();
         break;
+      case "civilStatus":
+        civilStatusRef.current?.focus();
+        break;
       case "email":
         emailRef.current?.focus();
+        break;
+      case "contactNo":
+        contactNoRef.current?.focus();
+        break;
+      case "emergencyContactName":
+        emergencyContactNameRef.current?.focus();
+        break;
+      case "emergencyContactNo":
+        emergencyContactNoRef.current?.focus();
+        break;
+      case "region":
+        regionRef.current?.focus();
         break;
     }
   };
@@ -143,16 +189,24 @@ export function Employee() {
       | "suffix"
       | "gender"
       | "birthdate"
-      | "email";
+      | "civilStatus"
+      | "email"
+      | "contactNo"
+      | "emergencyContactName"
+      | "emergencyContactNo"
+      | "region";
     label: string;
     type?: string;
     ref?: RefObject<HTMLInputElement | null>;
+    selectRef?: RefObject<HTMLButtonElement | null>;
+    comboBox?: boolean;
   };
 
   const personalInputList: typeElement[] = [
     {
       name: "prefix",
-      label: "Prefix"
+      label: "Prefix",
+      selectRef: prefixRef
     },
     {
       name: "firstname",
@@ -174,11 +228,13 @@ export function Employee() {
     },
     {
       name: "suffix",
-      label: "Suffix"
+      label: "Suffix",
+      selectRef: suffixRef
     },
     {
       name: "gender",
-      label: "Gender"
+      label: "Gender",
+      selectRef: genderRef
     },
     {
       name: "birthdate",
@@ -186,10 +242,41 @@ export function Employee() {
       ref: birthdateRef
     },
     {
+      name: "civilStatus",
+      label: "Civil Status",
+      selectRef: civilStatusRef
+    },
+    {
       name: "email",
       type: "email",
       label: "Email",
       ref: emailRef
+    },
+    {
+      name: "contactNo",
+      type: "text",
+      label: "Contact Number",
+      ref: contactNoRef
+    },
+    {
+      name: "emergencyContactName",
+      type: "text",
+      label: "Emergency Contact Name",
+      ref: emergencyContactNameRef
+    },
+    {
+      name: "emergencyContactNo",
+      type: "text",
+      label: "Emergency Contact Number",
+      ref: emergencyContactNoRef
+    }
+  ];
+
+  const addressInputList: typeElement[] = [
+    {
+      name: "region",
+      label: "Region",
+      comboBox: true
     }
   ];
 
@@ -206,7 +293,9 @@ export function Employee() {
 
   return (
     !getEmployeeList.isPending &&
-    !getPrefixSuffixList.isPending && (
+    !getPrefixSuffixList.isPending &&
+    !getCivilStatusList.isPending &&
+    !getRegionList.isPending && (
       <div>
         <ContentHeader
           mainModule="ADMIN MODULE"
@@ -317,7 +406,8 @@ export function Employee() {
                                 <FormControl>
                                   {element.name == "prefix" ||
                                   element.name == "suffix" ||
-                                  element.name == "gender" ? (
+                                  element.name == "gender" ||
+                                  element.name == "civilStatus" ? (
                                     <Select
                                       value={typeof field.value === "string" ? field.value : ""}
                                       onValueChange={field.onChange}
@@ -327,7 +417,7 @@ export function Employee() {
                                         className={cn(
                                           "border-primary w-full cursor-pointer rounded-xl border-1 text-sm font-medium data-[placeholder]:font-normal",
                                           employeeForm.formState.errors[element.name] &&
-                                            "border-destructive focus:ring-destructive"
+                                            "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive"
                                         )}
                                         name={field.name}
                                         id={field.name}
@@ -337,6 +427,7 @@ export function Employee() {
                                         onClick={() => {
                                           setBasicInfoAlertTitle("");
                                         }}
+                                        ref={element.selectRef}
                                       >
                                         <SelectValue placeholder={element.label} />
                                       </SelectTrigger>
@@ -371,6 +462,12 @@ export function Employee() {
                                                 {gender}
                                               </SelectItem>
                                             ))}
+                                          {element.name == "civilStatus" &&
+                                            getCivilStatusList.data.data.map((value: string) => (
+                                              <SelectItem key={value} value={value}>
+                                                {value}
+                                              </SelectItem>
+                                            ))}
                                         </SelectGroup>
                                       </SelectContent>
                                     </Select>
@@ -391,10 +488,21 @@ export function Employee() {
                                       {...field}
                                       id={field.name}
                                       ref={element.ref}
-                                      placeholder={element.label}
+                                      placeholder={
+                                        element.label == "Contact Number" ||
+                                        element.label == "Emergency Contact Number"
+                                          ? "09XXXXXXXXX"
+                                          : element.label
+                                      }
                                       type={element.type}
                                       autoComplete="false"
                                       name={element.name}
+                                      maxLength={
+                                        element.label == "Contact Number" ||
+                                        element.label == "Emergency Contact Number"
+                                          ? 11
+                                          : undefined
+                                      }
                                       className="bg-background border-primary h-9 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
                                       onFocus={() => {
                                         setBasicInfoAlertTitle("");
@@ -403,6 +511,52 @@ export function Employee() {
                                   )}
                                 </FormControl>
                               </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Address element */}
+                    <p className="mt-6 mb-2 text-sm font-medium">Current Address</p>
+                    <div className="grid items-start gap-6 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+                      {addressInputList.map((element) => (
+                        <FormField
+                          key={element.name}
+                          control={employeeForm.control}
+                          name={element.name}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-medium" htmlFor={field.name}>
+                                {element.label}
+                              </FormLabel>
+                              {element.comboBox && (
+                                <FormControl>
+                                  <Combobox
+                                    id={field.name}
+                                    name={element.name}
+                                    placeholder={element.label}
+                                    options={getRegionList.data.data.map(
+                                      (region: {
+                                        id: string;
+                                        region_code: string;
+                                        name: string;
+                                      }) => ({
+                                        id: region.id,
+                                        label: region.name,
+                                        value: region.region_code
+                                      })
+                                    )}
+                                    errorState={
+                                      employeeForm.formState.errors[element.name] ? true : false
+                                    }
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    buttonRef={regionRef}
+                                  />
+                                </FormControl>
+                              )}
                               <FormMessage />
                             </FormItem>
                           )}
@@ -430,6 +584,7 @@ export function Employee() {
             </CardContent>
           </Card>
         </main>
+        <Copyright className="mt-0 mb-8 text-sm" />
       </div>
     )
   );
