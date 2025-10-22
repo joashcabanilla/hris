@@ -8,7 +8,10 @@ import {
   getPositionList,
   getEmploymentStatusList,
   getCivilStatusList,
-  getRegionList
+  getRegionList,
+  getProvinceList,
+  getCityList,
+  getBarangayList
 } from "@/services/api/admin-api";
 
 export const useGetUsertypeList = () => {
@@ -71,6 +74,30 @@ export const useGetRegionList = () => {
   return useQuery({
     queryKey: ["adminGetRegionList"],
     queryFn: () => getRegionList(),
+    retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
+  });
+};
+
+export const useGetProvinceList = () => {
+  return useQuery({
+    queryKey: ["adminGetProvinceList"],
+    queryFn: () => getProvinceList(),
+    retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
+  });
+};
+
+export const useGetCityList = () => {
+  return useQuery({
+    queryKey: ["adminGetCityList"],
+    queryFn: () => getCityList(),
+    retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
+  });
+};
+
+export const useGetBarangayList = () => {
+  return useQuery({
+    queryKey: ["adminGetBarangayList"],
+    queryFn: () => getBarangayList(),
     retry: (failureCount, error) => RefreshTokenHook(failureCount, error)
   });
 };

@@ -51,6 +51,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Anchor } from "@/components/ui/anchor";
+import { Textarea } from "@/components/ui/textarea";
 
 //schemas
 import { employeeSchema } from "@/schemas/admin-schema";
@@ -59,7 +60,10 @@ import { employeeSchema } from "@/schemas/admin-schema";
 import {
   useGetEmployeeList,
   useGetCivilStatusList,
-  useGetRegionList
+  useGetRegionList,
+  useGetProvinceList,
+  useGetCityList,
+  useGetBarangayList
 } from "@/services/queries/admin-query";
 import { useGetPrefixSuffixList } from "@/services/queries/account-query";
 
@@ -82,11 +86,19 @@ export function Employee() {
   const emergencyContactNameRef = useRef<HTMLInputElement>(null);
   const emergencyContactNoRef = useRef<HTMLInputElement>(null);
   const regionRef = useRef<HTMLButtonElement>(null);
+  const provinceRef = useRef<HTMLButtonElement>(null);
+  const cityRef = useRef<HTMLButtonElement>(null);
+  const barangayRef = useRef<HTMLButtonElement>(null);
+  const addressRef = useRef<HTMLTextAreaElement>(null);
+  const zipCodeRef = useRef<HTMLInputElement>(null);
 
   //local state
   const [profileAlertTitle, setProfileAlertTitle] = useState<string>("");
   const [basicInfoAlertTitle, setBasicInfoAlertTitle] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
+  const [selectedRegion, setSelectedRegion] = useState<number>(0);
+  const [selectedProvince, setSelectedProvince] = useState<number>(0);
+  const [selecctedCity, setSelectedCity] = useState<number>(0);
 
   const searchParams = useSearchParams();
   const employeeId = searchParams.get("id");
@@ -98,6 +110,9 @@ export function Employee() {
   const getPrefixSuffixList = useGetPrefixSuffixList();
   const getCivilStatusList = useGetCivilStatusList();
   const getRegionList = useGetRegionList();
+  const getProvinceList = useGetProvinceList();
+  const getCityList = useGetCityList();
+  const getBarangayList = useGetBarangayList();
 
   //zod validation form
   const employeeForm = useForm<z.infer<typeof employeeSchema>>({
@@ -116,7 +131,12 @@ export function Employee() {
       contactNo: "",
       emergencyContactName: "",
       emergencyContactNo: "",
-      region: ""
+      region: "",
+      province: "",
+      city: "",
+      barangay: "",
+      address: "",
+      zipCode: ""
     }
   });
 
@@ -166,6 +186,21 @@ export function Employee() {
       case "region":
         regionRef.current?.focus();
         break;
+      case "province":
+        provinceRef.current?.focus();
+        break;
+      case "city":
+        cityRef.current?.focus();
+        break;
+      case "barangay":
+        barangayRef.current?.focus();
+        break;
+      case "address":
+        addressRef.current?.focus();
+        break;
+      case "zipCode":
+        zipCodeRef.current?.focus();
+        break;
     }
   };
 
@@ -194,11 +229,17 @@ export function Employee() {
       | "contactNo"
       | "emergencyContactName"
       | "emergencyContactNo"
-      | "region";
+      | "region"
+      | "province"
+      | "city"
+      | "barangay"
+      | "address"
+      | "zipCode";
     label: string;
     type?: string;
     ref?: RefObject<HTMLInputElement | null>;
     selectRef?: RefObject<HTMLButtonElement | null>;
+    textareaRef?: RefObject<HTMLTextAreaElement | null>;
     comboBox?: boolean;
   };
 
@@ -276,12 +317,102 @@ export function Employee() {
     {
       name: "region",
       label: "Region",
-      comboBox: true
+      comboBox: true,
+      selectRef: regionRef
+    },
+    {
+      name: "province",
+      label: "Province",
+      comboBox: true,
+      selectRef: provinceRef
+    },
+    {
+      name: "city",
+      label: "City / Municipality",
+      comboBox: true,
+      selectRef: cityRef
+    },
+    {
+      name: "barangay",
+      label: "Barangay",
+      comboBox: true,
+      selectRef: barangayRef
+    },
+    {
+      name: "zipCode",
+      label: "Zip Code",
+      type: "text",
+      ref: zipCodeRef
+    },
+    {
+      name: "address",
+      label: "Address",
+      type: "text",
+      textareaRef: addressRef
     }
   ];
 
   //list of gender
   const genderList = ["Male", "Female"];
+
+  //handle combobox options data
+  const handleComboboxOptions = (name: string) => {
+    switch (name) {
+      case "region":
+        if (!getRegionList.isPending) {
+          return getRegionList.data.data.map(
+            (region: { id: string; region_code: string; name: string }) => ({
+              id: region.id,
+              label: region.name,
+              value: region.region_code
+            })
+          );
+        }
+        break;
+      case "province":
+        if (!getProvinceList.isPending) {
+          return getProvinceList.data.data
+            .filter((province: { region_code: number }) => province.region_code === selectedRegion)
+            .map((province: { id: string; province_code: string; name: string }) => ({
+              id: province.id,
+              label: province.name,
+              value: province.province_code
+            }));
+        }
+        break;
+      case "city":
+        if (!getCityList.isPending) {
+          return getCityList.data.data
+            .filter(
+              (city: { region_code: number; province_code: number }) =>
+                city.region_code === selectedRegion && city.province_code === selectedProvince
+            )
+            .map((city: { id: string; citymun_code: string; name: string }) => ({
+              id: city.id,
+              label: city.name,
+              value: city.citymun_code
+            }));
+        }
+        break;
+      case "barangay":
+        if (!getBarangayList.isPending) {
+          return getBarangayList.data.data
+            .filter(
+              (barangay: { region_code: number; province_code: number; citymun_code: number }) =>
+                barangay.region_code === selectedRegion &&
+                barangay.province_code === selectedProvince &&
+                barangay.citymun_code === selecctedCity
+            )
+            .map((barangay: { id: string; brgy_code: string; name: string }) => ({
+              id: barangay.id,
+              label: barangay.name,
+              value: barangay.brgy_code
+            }));
+        }
+        break;
+    }
+    return [];
+  };
 
   let employeeData: EmployeeManagementColumnProps | null = null;
   if (!getEmployeeList.isPending) {
@@ -295,7 +426,10 @@ export function Employee() {
     !getEmployeeList.isPending &&
     !getPrefixSuffixList.isPending &&
     !getCivilStatusList.isPending &&
-    !getRegionList.isPending && (
+    !getRegionList.isPending &&
+    !getProvinceList.isPending &&
+    !getCityList.isPending &&
+    !getBarangayList.isPending && (
       <div>
         <ContentHeader
           mainModule="ADMIN MODULE"
@@ -537,26 +671,65 @@ export function Employee() {
                                     id={field.name}
                                     name={element.name}
                                     placeholder={element.label}
-                                    options={getRegionList.data.data.map(
-                                      (region: {
-                                        id: string;
-                                        region_code: string;
-                                        name: string;
-                                      }) => ({
-                                        id: region.id,
-                                        label: region.name,
-                                        value: region.region_code
-                                      })
-                                    )}
+                                    options={handleComboboxOptions(element.name)}
                                     errorState={
                                       employeeForm.formState.errors[element.name] ? true : false
                                     }
                                     value={field.value}
-                                    onChange={field.onChange}
-                                    buttonRef={regionRef}
+                                    onChange={(value) => {
+                                      field.onChange(value);
+                                      if (element.name == "region") {
+                                        setSelectedRegion(parseInt(value));
+                                        employeeForm.setValue("province", "");
+                                        employeeForm.setValue("city", "");
+                                        employeeForm.setValue("barangay", "");
+                                      }
+
+                                      if (element.name == "province") {
+                                        setSelectedProvince(parseInt(value));
+                                        employeeForm.setValue("city", "");
+                                        employeeForm.setValue("barangay", "");
+                                      }
+
+                                      if (element.name == "city") {
+                                        setSelectedCity(parseInt(value));
+                                        employeeForm.setValue("barangay", "");
+                                      }
+                                    }}
+                                    buttonRef={element.selectRef}
                                   />
                                 </FormControl>
                               )}
+                              {element.name == "zipCode" && (
+                                <Input
+                                  {...field}
+                                  id={field.name}
+                                  ref={element.ref}
+                                  placeholder={element.label}
+                                  type={element.type}
+                                  autoComplete="false"
+                                  name={element.name}
+                                  className="bg-background border-primary h-9 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
+                                  onFocus={() => {
+                                    setBasicInfoAlertTitle("");
+                                  }}
+                                />
+                              )}
+                              {element.name == "address" && (
+                                <Textarea
+                                  {...field}
+                                  id={field.name}
+                                  ref={element.textareaRef}
+                                  name={element.name}
+                                  className="bg-background border-primary h-14 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
+                                  placeholder={element.label}
+                                  autoComplete="false"
+                                  onFocus={() => {
+                                    setBasicInfoAlertTitle("");
+                                  }}
+                                />
+                              )}
+
                               <FormMessage />
                             </FormItem>
                           )}

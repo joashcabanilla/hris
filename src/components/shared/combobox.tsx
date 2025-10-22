@@ -54,6 +54,7 @@ export const Combobox = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
+          disabled={options.length === 0}
           className={cn(
             "border-primary text-muted-foreground hover:text-muted-foreground dark:border-primary relative w-full cursor-pointer justify-between rounded-xl font-normal hover:bg-transparent",
             errorState &&

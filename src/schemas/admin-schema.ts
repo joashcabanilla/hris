@@ -79,5 +79,10 @@ export const employeeSchema = z.object({
     .min(11, "Emergency contact number must be at least 11 digits.")
     .max(11, "Emergency contact number must not exceed 11 digits.")
     .regex(/^09\d{9}$/, "Emergency contact number must start with 09 and contain 11 digits."),
-  region: z.string().min(1, "Region is required.")
+  region: z.string().min(1, "Region is required."),
+  province: z.string().min(1, "Province is required."),
+  city: z.string().min(1, "City is required."),
+  barangay: z.string().min(1, "Barangay is required."),
+  address: z.string().min(1, "Address is required."),
+  zipCode: z.string().min(4, "Zip code must be at least 4 digits.")
 });
