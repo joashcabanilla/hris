@@ -91,10 +91,12 @@ export function Employee() {
   const barangayRef = useRef<HTMLButtonElement>(null);
   const addressRef = useRef<HTMLTextAreaElement>(null);
   const zipCodeRef = useRef<HTMLInputElement>(null);
+  const employeeNoRef = useRef<HTMLInputElement>(null);
 
   //local state
   const [profileAlertTitle, setProfileAlertTitle] = useState<string>("");
   const [basicInfoAlertTitle, setBasicInfoAlertTitle] = useState<string>("");
+  const [employeeInfoAlertTitle, setEmployeeInfoAlertTitle] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<string | undefined>(undefined);
   const [selectedRegion, setSelectedRegion] = useState<number>(0);
   const [selectedProvince, setSelectedProvince] = useState<number>(0);
@@ -136,7 +138,8 @@ export function Employee() {
       city: "",
       barangay: "",
       address: "",
-      zipCode: ""
+      zipCode: "",
+      employeeNo: ""
     }
   });
 
@@ -201,6 +204,9 @@ export function Employee() {
       case "zipCode":
         zipCodeRef.current?.focus();
         break;
+      case "employeeNo":
+        employeeNoRef.current?.focus();
+        break;
     }
   };
 
@@ -234,7 +240,8 @@ export function Employee() {
       | "city"
       | "barangay"
       | "address"
-      | "zipCode";
+      | "zipCode"
+      | "employeeNo";
     label: string;
     type?: string;
     ref?: RefObject<HTMLInputElement | null>;
@@ -352,6 +359,15 @@ export function Employee() {
     }
   ];
 
+  const employeeInputList: typeElement[] = [
+    {
+      name: "employeeNo",
+      label: "Employee Number",
+      type: "text",
+      ref: employeeNoRef
+    }
+  ];
+
   //list of gender
   const genderList = ["Male", "Female"];
 
@@ -415,21 +431,31 @@ export function Employee() {
   };
 
   let employeeData: EmployeeManagementColumnProps | null = null;
-  if (!getEmployeeList.isPending) {
+  if (!getEmployeeList.isPending && getEmployeeList.data != undefined) {
     if (getEmployeeList.data.data.length == 1) {
       const { data } = getEmployeeList.data;
       employeeData = data[0];
     }
   }
 
-  return (
+  const checkFetchedData =
     !getEmployeeList.isPending &&
     !getPrefixSuffixList.isPending &&
     !getCivilStatusList.isPending &&
     !getRegionList.isPending &&
     !getProvinceList.isPending &&
     !getCityList.isPending &&
-    !getBarangayList.isPending && (
+    !getBarangayList.isPending &&
+    getEmployeeList.data != undefined &&
+    getPrefixSuffixList.data != undefined &&
+    getCivilStatusList.data != undefined &&
+    getRegionList.data != undefined &&
+    getProvinceList.data != undefined &&
+    getCityList.data != undefined &&
+    getBarangayList.data != undefined;
+
+  return (
+    checkFetchedData && (
       <div>
         <ContentHeader
           mainModule="ADMIN MODULE"
@@ -665,71 +691,126 @@ export function Employee() {
                               <FormLabel className="font-medium" htmlFor={field.name}>
                                 {element.label}
                               </FormLabel>
-                              {element.comboBox && (
+                              <div className="relative">
+                                {element.comboBox && (
+                                  <FormControl>
+                                    <Combobox
+                                      id={field.name}
+                                      name={element.name}
+                                      placeholder={element.label}
+                                      options={handleComboboxOptions(element.name)}
+                                      errorState={
+                                        employeeForm.formState.errors[element.name] ? true : false
+                                      }
+                                      value={field.value}
+                                      onChange={(value) => {
+                                        field.onChange(value);
+                                        if (element.name == "region") {
+                                          setSelectedRegion(parseInt(value));
+                                          employeeForm.setValue("province", "");
+                                          employeeForm.setValue("city", "");
+                                          employeeForm.setValue("barangay", "");
+                                        }
+
+                                        if (element.name == "province") {
+                                          setSelectedProvince(parseInt(value));
+                                          employeeForm.setValue("city", "");
+                                          employeeForm.setValue("barangay", "");
+                                        }
+
+                                        if (element.name == "city") {
+                                          setSelectedCity(parseInt(value));
+                                          employeeForm.setValue("barangay", "");
+                                        }
+                                      }}
+                                      buttonRef={element.selectRef}
+                                    />
+                                  </FormControl>
+                                )}
+                                {element.name == "zipCode" && (
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      id={field.name}
+                                      ref={element.ref}
+                                      placeholder={element.label}
+                                      type={element.type}
+                                      autoComplete="false"
+                                      name={element.name}
+                                      className="bg-background border-primary h-9 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
+                                      onFocus={() => {
+                                        setBasicInfoAlertTitle("");
+                                      }}
+                                    />
+                                  </FormControl>
+                                )}
+                                {element.name == "address" && (
+                                  <FormControl>
+                                    <Textarea
+                                      {...field}
+                                      id={field.name}
+                                      ref={element.textareaRef}
+                                      name={element.name}
+                                      className="bg-background border-primary h-14 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
+                                      placeholder={element.label}
+                                      autoComplete="false"
+                                      onFocus={() => {
+                                        setBasicInfoAlertTitle("");
+                                      }}
+                                    />
+                                  </FormControl>
+                                )}
+                              </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Employee Information */}
+                  <div className="bg-background mt-4 rounded-xl p-4 shadow-lg">
+                    <p className="text-base font-medium">Employee Information</p>
+                    <span className="text-muted-foreground text-sm font-normal">
+                      Employment-related details such as employee number, department, position, date
+                      of hire, and current employment status.
+                    </span>
+
+                    {/*Employee Information Error Message*/}
+                    <div className="mt-4">
+                      <FormAlert title={employeeInfoAlertTitle} type="error" />
+                    </div>
+
+                    <div className="mt-6 grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {/* Employee Info Element */}
+                      {employeeInputList.map((element) => (
+                        <FormField
+                          key={element.name}
+                          control={employeeForm.control}
+                          name={element.name}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-medium" htmlFor={field.name}>
+                                {element.label}
+                              </FormLabel>
+                              <div className="relative">
                                 <FormControl>
-                                  <Combobox
+                                  <Input
+                                    {...field}
                                     id={field.name}
-                                    name={element.name}
+                                    ref={element.ref}
                                     placeholder={element.label}
-                                    options={handleComboboxOptions(element.name)}
-                                    errorState={
-                                      employeeForm.formState.errors[element.name] ? true : false
-                                    }
-                                    value={field.value}
-                                    onChange={(value) => {
-                                      field.onChange(value);
-                                      if (element.name == "region") {
-                                        setSelectedRegion(parseInt(value));
-                                        employeeForm.setValue("province", "");
-                                        employeeForm.setValue("city", "");
-                                        employeeForm.setValue("barangay", "");
-                                      }
-
-                                      if (element.name == "province") {
-                                        setSelectedProvince(parseInt(value));
-                                        employeeForm.setValue("city", "");
-                                        employeeForm.setValue("barangay", "");
-                                      }
-
-                                      if (element.name == "city") {
-                                        setSelectedCity(parseInt(value));
-                                        employeeForm.setValue("barangay", "");
-                                      }
+                                    type={element.type}
+                                    autoComplete="false"
+                                    name={element.name}
+                                    className="bg-background border-primary h-9 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
+                                    onFocus={() => {
+                                      setEmployeeInfoAlertTitle("");
                                     }}
-                                    buttonRef={element.selectRef}
                                   />
                                 </FormControl>
-                              )}
-                              {element.name == "zipCode" && (
-                                <Input
-                                  {...field}
-                                  id={field.name}
-                                  ref={element.ref}
-                                  placeholder={element.label}
-                                  type={element.type}
-                                  autoComplete="false"
-                                  name={element.name}
-                                  className="bg-background border-primary h-9 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
-                                  onFocus={() => {
-                                    setBasicInfoAlertTitle("");
-                                  }}
-                                />
-                              )}
-                              {element.name == "address" && (
-                                <Textarea
-                                  {...field}
-                                  id={field.name}
-                                  ref={element.textareaRef}
-                                  name={element.name}
-                                  className="bg-background border-primary h-14 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
-                                  placeholder={element.label}
-                                  autoComplete="false"
-                                  onFocus={() => {
-                                    setBasicInfoAlertTitle("");
-                                  }}
-                                />
-                              )}
-
+                              </div>
                               <FormMessage />
                             </FormItem>
                           )}

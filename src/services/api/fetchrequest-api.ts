@@ -46,7 +46,7 @@ export default async function fetchRequest(
       throw errorData;
     }
 
-    if (res?.status == 401 && res?.statusText == "Unauthorized") {
+    if ((res?.status == 401 && res?.statusText == "Unauthorized") || res?.status == 429) {
       const errorData: { message: string } = await res.json();
       throw errorData;
     }

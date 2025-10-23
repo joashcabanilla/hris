@@ -11,5 +11,12 @@ export const RefreshTokenHook = (failureCount: number, error: { message: string 
     });
     return true;
   }
+
+  if (error.message == "Too Many Attempts.") {
+    setTimeout(() => {
+      window.location.reload();
+    }, 5000);
+  }
+
   return false;
 };

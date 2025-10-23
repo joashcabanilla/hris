@@ -84,5 +84,6 @@ export const employeeSchema = z.object({
   city: z.string().min(1, "City is required."),
   barangay: z.string().min(1, "Barangay is required."),
   address: z.string().min(1, "Address is required."),
-  zipCode: z.string().min(4, "Zip code must be at least 4 digits.")
+  zipCode: z.string().min(4, "Zip code must be at least 4 digits."),
+  employeeNo: z.string().min(1, "Employee number is required.")
 });
