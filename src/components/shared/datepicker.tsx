@@ -19,7 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 interface DatePickerProps {
   id: string;
   name: string;
-  inputRef: RefObject<HTMLInputElement | null>;
+  inputRef?: RefObject<HTMLInputElement | null>;
   disabled: boolean;
   errorState: boolean;
   value?: string;

@@ -83,7 +83,22 @@ export const employeeSchema = z.object({
   province: z.string().min(1, "Province is required."),
   city: z.string().min(1, "City is required."),
   barangay: z.string().min(1, "Barangay is required."),
-  address: z.string().min(1, "Address is required."),
   zipCode: z.string().min(4, "Zip code must be at least 4 digits."),
-  employeeNo: z.string().min(1, "Employee number is required.")
+  address: z.string().min(1, "Address is required."),
+  employeeNo: z.string().min(1, "Employee number is required."),
+  department: z.string().min(1, "Department is required."),
+  position: z.string().min(1, "Position is required."),
+  employmentStatus: z.string().min(1, "Employment status is required."),
+  dateHired: z
+    .string()
+    .min(1, "Date of hire is required.")
+    .refine((val) => /^\d{2}\/\d{2}\/\d{4}$/.test(val), "Use MM/DD/YYYY format.")
+    .refine((val) => {
+      const parsed = parse(val, "MM/dd/yyyy", new Date());
+      return isValid(parsed);
+    }, "Invalid date format."),
+  tin: z.string().min(1, "TIN number is required."),
+  sss: z.string().min(1, "SSS number is required."),
+  pagibig: z.string().min(1, "Pag-IBIG number is required."),
+  philhealth: z.string().min(1, "PhilHealth number is required.")
 });

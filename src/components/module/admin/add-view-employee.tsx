@@ -63,7 +63,10 @@ import {
   useGetRegionList,
   useGetProvinceList,
   useGetCityList,
-  useGetBarangayList
+  useGetBarangayList,
+  useGetDepartmentList,
+  useGetPositionList,
+  useGetEmploymentStatusList
 } from "@/services/queries/admin-query";
 import { useGetPrefixSuffixList } from "@/services/queries/account-query";
 
@@ -92,6 +95,14 @@ export function Employee() {
   const addressRef = useRef<HTMLTextAreaElement>(null);
   const zipCodeRef = useRef<HTMLInputElement>(null);
   const employeeNoRef = useRef<HTMLInputElement>(null);
+  const departmentRef = useRef<HTMLButtonElement>(null);
+  const positionRef = useRef<HTMLButtonElement>(null);
+  const dateHiredRef = useRef<HTMLInputElement>(null);
+  const tinRef = useRef<HTMLInputElement>(null);
+  const sssRef = useRef<HTMLInputElement>(null);
+  const pagibigRef = useRef<HTMLInputElement>(null);
+  const philhealthRef = useRef<HTMLInputElement>(null);
+  const employmentStatusRef = useRef<HTMLButtonElement>(null);
 
   //local state
   const [profileAlertTitle, setProfileAlertTitle] = useState<string>("");
@@ -115,6 +126,9 @@ export function Employee() {
   const getProvinceList = useGetProvinceList();
   const getCityList = useGetCityList();
   const getBarangayList = useGetBarangayList();
+  const getDepartmentList = useGetDepartmentList();
+  const getPositionList = useGetPositionList();
+  const getEmploymentStatusList = useGetEmploymentStatusList();
 
   //zod validation form
   const employeeForm = useForm<z.infer<typeof employeeSchema>>({
@@ -139,7 +153,15 @@ export function Employee() {
       barangay: "",
       address: "",
       zipCode: "",
-      employeeNo: ""
+      employeeNo: "",
+      department: "",
+      position: "",
+      employmentStatus: "",
+      dateHired: "",
+      tin: "",
+      sss: "",
+      pagibig: "",
+      philhealth: ""
     }
   });
 
@@ -198,14 +220,38 @@ export function Employee() {
       case "barangay":
         barangayRef.current?.focus();
         break;
-      case "address":
-        addressRef.current?.focus();
-        break;
       case "zipCode":
         zipCodeRef.current?.focus();
         break;
+      case "address":
+        addressRef.current?.focus();
+        break;
       case "employeeNo":
         employeeNoRef.current?.focus();
+        break;
+      case "department":
+        departmentRef.current?.focus();
+        break;
+      case "position":
+        positionRef.current?.focus();
+        break;
+      case "employmentStatus":
+        employmentStatusRef.current?.focus();
+        break;
+      case "dateHired":
+        dateHiredRef.current?.focus();
+        break;
+      case "tin":
+        tinRef.current?.focus();
+        break;
+      case "sss":
+        sssRef.current?.focus();
+        break;
+      case "pagibig":
+        pagibigRef.current?.focus();
+        break;
+      case "philhealth":
+        philhealthRef.current?.focus();
         break;
     }
   };
@@ -241,7 +287,15 @@ export function Employee() {
       | "barangay"
       | "address"
       | "zipCode"
-      | "employeeNo";
+      | "employeeNo"
+      | "department"
+      | "position"
+      | "employmentStatus"
+      | "dateHired"
+      | "tin"
+      | "sss"
+      | "pagibig"
+      | "philhealth";
     label: string;
     type?: string;
     ref?: RefObject<HTMLInputElement | null>;
@@ -365,6 +419,48 @@ export function Employee() {
       label: "Employee Number",
       type: "text",
       ref: employeeNoRef
+    },
+    {
+      name: "department",
+      label: "Department",
+      comboBox: true,
+      selectRef: departmentRef
+    },
+    {
+      name: "position",
+      label: "Position",
+      comboBox: true,
+      selectRef: positionRef
+    },
+    {
+      name: "employmentStatus",
+      label: "Employement Status",
+      selectRef: employmentStatusRef
+    },
+    {
+      name: "dateHired",
+      label: "Date Hired",
+      ref: dateHiredRef
+    },
+    {
+      name: "tin",
+      label: "TIN",
+      ref: tinRef
+    },
+    {
+      name: "sss",
+      label: "SSS",
+      ref: sssRef
+    },
+    {
+      name: "pagibig",
+      label: "Pag-IBIG",
+      ref: pagibigRef
+    },
+    {
+      name: "philhealth",
+      label: "PhilHealth",
+      ref: philhealthRef
     }
   ];
 
@@ -426,6 +522,26 @@ export function Employee() {
             }));
         }
         break;
+      case "department":
+        if (!getDepartmentList.isPending) {
+          return getDepartmentList.data.data.map(
+            (department: { id: string; department: string }) => ({
+              id: department.id,
+              label: department.department,
+              value: department.department
+            })
+          );
+        }
+        break;
+      case "position":
+        if (!getPositionList.isPending) {
+          return getPositionList.data.data.map((position: { id: string; position: string }) => ({
+            id: position.id,
+            label: position.position,
+            value: position.position
+          }));
+        }
+        break;
     }
     return [];
   };
@@ -446,13 +562,19 @@ export function Employee() {
     !getProvinceList.isPending &&
     !getCityList.isPending &&
     !getBarangayList.isPending &&
+    !getDepartmentList.isPending &&
+    !getPositionList.isPending &&
+    !getEmploymentStatusList.isPending &&
     getEmployeeList.data != undefined &&
     getPrefixSuffixList.data != undefined &&
     getCivilStatusList.data != undefined &&
     getRegionList.data != undefined &&
     getProvinceList.data != undefined &&
     getCityList.data != undefined &&
-    getBarangayList.data != undefined;
+    getBarangayList.data != undefined &&
+    getDepartmentList.data != undefined &&
+    getPositionList.data != undefined &&
+    getEmploymentStatusList != undefined;
 
   return (
     checkFetchedData && (
@@ -796,19 +918,84 @@ export function Employee() {
                               </FormLabel>
                               <div className="relative">
                                 <FormControl>
-                                  <Input
-                                    {...field}
-                                    id={field.name}
-                                    ref={element.ref}
-                                    placeholder={element.label}
-                                    type={element.type}
-                                    autoComplete="false"
-                                    name={element.name}
-                                    className="bg-background border-primary h-9 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
-                                    onFocus={() => {
-                                      setEmployeeInfoAlertTitle("");
-                                    }}
-                                  />
+                                  {element.comboBox ? (
+                                    <Combobox
+                                      id={field.name}
+                                      name={element.name}
+                                      placeholder={element.label}
+                                      options={handleComboboxOptions(element.name)}
+                                      errorState={
+                                        employeeForm.formState.errors[element.name] ? true : false
+                                      }
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      buttonRef={element.selectRef}
+                                    />
+                                  ) : element.name == "dateHired" ? (
+                                    <DatePicker
+                                      id={field.name}
+                                      name={element.name}
+                                      disabled={false}
+                                      inputRef={element.ref}
+                                      errorState={
+                                        employeeForm.formState.errors[element.name] ? true : false
+                                      }
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                    />
+                                  ) : element.name == "employmentStatus" ? (
+                                    <Select
+                                      value={typeof field.value === "string" ? field.value : ""}
+                                      onValueChange={field.onChange}
+                                      name={field.name}
+                                    >
+                                      <SelectTrigger
+                                        className={cn(
+                                          "border-primary w-full cursor-pointer rounded-xl border-1 text-sm font-medium data-[placeholder]:font-normal",
+                                          employeeForm.formState.errors[element.name] &&
+                                            "border-destructive focus-visible:ring-destructive/20 focus-visible:border-destructive"
+                                        )}
+                                        name={field.name}
+                                        id={field.name}
+                                        onFocus={() => {
+                                          setEmployeeInfoAlertTitle("");
+                                        }}
+                                        onClick={() => {
+                                          setEmployeeInfoAlertTitle("");
+                                        }}
+                                        ref={element.selectRef}
+                                      >
+                                        <SelectValue placeholder={element.label} />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>{element.label} List</SelectLabel>
+                                          {element.name == "employmentStatus" &&
+                                            getEmploymentStatusList.data.data.map(
+                                              (status: string) => (
+                                                <SelectItem key={status} value={status}>
+                                                  {status}
+                                                </SelectItem>
+                                              )
+                                            )}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  ) : (
+                                    <Input
+                                      {...field}
+                                      id={field.name}
+                                      ref={element.ref}
+                                      placeholder={element.label}
+                                      type={element.type}
+                                      autoComplete="false"
+                                      name={element.name}
+                                      className="bg-background border-primary h-9 rounded-xl border-1 text-sm font-medium placeholder:font-normal"
+                                      onFocus={() => {
+                                        setEmployeeInfoAlertTitle("");
+                                      }}
+                                    />
+                                  )}
                                 </FormControl>
                               </div>
                               <FormMessage />
