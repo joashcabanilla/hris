@@ -1,7 +1,7 @@
 "use client";
 
 //hooks
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FieldErrors } from "react-hook-form";
@@ -70,9 +70,15 @@ import {
 } from "@/services/queries/admin-query";
 import { useGetPrefixSuffixList } from "@/services/queries/account-query";
 
+//zustand global state
+import { useEmployeeManagementStore } from "@/store/module-store";
+
 export function Employee() {
   //router hook
   const router = useRouter();
+
+  //zustand global state
+  const { employeeId } = useEmployeeManagementStore();
 
   //ref hook
   const prefixRef = useRef<HTMLButtonElement>(null);
@@ -112,9 +118,6 @@ export function Employee() {
   const [selectedRegion, setSelectedRegion] = useState<number>(0);
   const [selectedProvince, setSelectedProvince] = useState<number>(0);
   const [selecctedCity, setSelectedCity] = useState<number>(0);
-
-  const searchParams = useSearchParams();
-  const employeeId = searchParams.get("id");
 
   //tanstack api query
   const getEmployeeList = useGetEmployeeList(
@@ -166,7 +169,9 @@ export function Employee() {
   });
 
   //handle employee form submit
-  const employeeFormSubmit = (data: z.infer<typeof employeeSchema>) => {};
+  const employeeFormSubmit = (data: z.infer<typeof employeeSchema>) => {
+    console.log(data);
+  };
 
   //handle employee form error
   const employeeFormError = (error: FieldErrors) => {

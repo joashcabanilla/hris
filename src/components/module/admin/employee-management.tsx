@@ -41,6 +41,7 @@ import {
 
 //zustand global state
 import { useTableStore } from "@/store/table-store";
+import { useEmployeeManagementStore } from "@/store/module-store";
 
 export function EmployeeManagement() {
   //router hook
@@ -48,6 +49,7 @@ export function EmployeeManagement() {
 
   //zustand global state
   const { setGlobalFilter, setColumnFilters, setPagination } = useTableStore();
+  const { setEmployeeId } = useEmployeeManagementStore();
 
   //tanstack api query
   const getEmployeeList = useGetEmployeeList(null);
@@ -72,7 +74,8 @@ export function EmployeeManagement() {
 
   //handle view employee click event
   const handleViewEmployee = (employee: EmployeeManagementColumnProps) => {
-    router.replace("employee?id=" + employee.id);
+    setEmployeeId(employee.id);
+    router.replace("employee");
   };
 
   const column = columns({ handleViewEmployee });
@@ -81,8 +84,9 @@ export function EmployeeManagement() {
     setGlobalFilter("");
     setColumnFilters([]);
     setPagination({ pageIndex: 0, pageSize: 5 });
+    setEmployeeId(null);
     setMounted(true);
-  }, [setGlobalFilter, setColumnFilters, setPagination, setMounted]);
+  }, [setGlobalFilter, setColumnFilters, setPagination, setEmployeeId, setMounted]);
 
   if (!mounted) {
     return null;
@@ -92,7 +96,11 @@ export function EmployeeManagement() {
     !getEmployeeList.isPending &&
     !getDepartmentList.isPending &&
     !getPositionList.isPending &&
-    !getEmploymentStatusList.isPending && (
+    !getEmploymentStatusList.isPending &&
+    getEmployeeList.data != undefined &&
+    getDepartmentList.data != undefined &&
+    getPositionList.data != undefined &&
+    getEmploymentStatusList.data != undefined && (
       <div>
         <ContentHeader mainModule="ADMIN MODULE" subModule="EMPLOYEE MANAGEMENT" />
         <main className="grid grid-cols-1 p-4">
